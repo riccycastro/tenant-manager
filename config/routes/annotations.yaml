@@ -1,0 +1,3 @@
+security_container_web:
+  resource: ../../src/Containers/SecurityContainer/UI/API/Controllers/
+  type: annotation

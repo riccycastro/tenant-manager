@@ -27,6 +27,8 @@ final class MigrationFactory implements MigrationFactoryInterface
             $this->logger
         );
 
+        assert($migration instanceof AbstractMigration);
+
         if ($migration instanceof HashableMigrationInterface) {
             $migration->setPasswordHasherFactory($this->passwordHasherFactory);
         }

@@ -8,5 +8,5 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 interface HashableMigrationInterface
 {
-    public function setPasswordHasherFactory(PasswordHasherFactoryInterface $passwordHasherFactory);
+    public function setPasswordHasherFactory(PasswordHasherFactoryInterface $passwordHasherFactory): void;
 }

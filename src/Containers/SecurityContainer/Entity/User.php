@@ -9,7 +9,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    // @phpstan-ignore-next-line
     private string $username;
+
+    // @phpstan-ignore-next-line
     private string $password;
 
     public function getPassword(): ?string

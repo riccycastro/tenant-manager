@@ -36,7 +36,7 @@ final class Version20230909112914 extends AbstractMigration implements HashableM
         $this->addSql("DELETE FROM `user` WHERE `email` = 'system@system.com';");
     }
 
-    public function setPasswordHasherFactory(PasswordHasherFactoryInterface $passwordHasherFactory)
+    public function setPasswordHasherFactory(PasswordHasherFactoryInterface $passwordHasherFactory): void
     {
         $this->passwordHasherFactory = $passwordHasherFactory;
     }

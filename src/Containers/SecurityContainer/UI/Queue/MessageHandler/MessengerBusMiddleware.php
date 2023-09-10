@@ -10,7 +10,6 @@ use Symfony\Component\Messenger\Middleware\StackInterface;
 
 final class MessengerBusMiddleware implements MiddlewareInterface
 {
-
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
         return $envelope;

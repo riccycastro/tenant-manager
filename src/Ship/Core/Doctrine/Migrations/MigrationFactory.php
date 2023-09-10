@@ -14,8 +14,8 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 final class MigrationFactory implements MigrationFactoryInterface
 {
     public function __construct(
-        private readonly Connection                     $connection,
-        private readonly LoggerInterface                $logger,
+        private readonly Connection $connection,
+        private readonly LoggerInterface $logger,
         private readonly PasswordHasherFactoryInterface $passwordHasherFactory
     ) {
     }

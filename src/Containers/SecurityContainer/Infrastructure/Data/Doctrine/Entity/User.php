@@ -2,18 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Containers\SecurityContainer\Entity;
+namespace App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+#[ORM\Entity]
 final class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    // @phpstan-ignore-next-line
-    private string $username;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id;
 
-    // @phpstan-ignore-next-line
-    private string $password;
+    #[ORM\Column(type: 'string')]
+    private ?string $email;
+
+    #[ORM\Column(type: 'string')]
+    private ?string $password;
 
     public function getPassword(): ?string
     {
@@ -25,13 +32,13 @@ final class User implements UserInterface, PasswordAuthenticatedUserInterface
         return ['ROLE_USER'];
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // TODO: Implement eraseCredentials() method.
     }
 
     public function getUserIdentifier(): string
     {
-        return $this->username;
+        return $this->email;
     }
 }

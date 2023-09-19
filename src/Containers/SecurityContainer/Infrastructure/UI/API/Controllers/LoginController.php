@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Containers\SecurityContainer\UI\API\Controllers;
+namespace App\Containers\SecurityContainer\Infrastructure\UI\API\Controllers;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;

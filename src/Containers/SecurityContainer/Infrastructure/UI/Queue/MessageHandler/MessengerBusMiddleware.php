@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Containers\SecurityContainer\UI\Queue\MessageHandler;
+namespace App\Containers\SecurityContainer\Infrastructure\UI\Queue\MessageHandler;
 
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Containers\SecurityContainer\Entity\User;
+use App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity\User;
 use App\Ship\Core\Doctrine\Migrations\Interfaces\HashableMigrationInterface;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;

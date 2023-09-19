@@ -9,18 +9,24 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity]
-final class User implements UserInterface, PasswordAuthenticatedUserInterface
+#[ORM\Table(name: 'user')]
+final class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    private ?int $id; // @phpstan-ignore-line
 
     #[ORM\Column(type: 'string')]
-    private ?string $email;
+    private ?string $email; // @phpstan-ignore-line
 
     #[ORM\Column(type: 'string')]
-    private ?string $password;
+    private ?string $password; // @phpstan-ignore-line
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     public function getPassword(): ?string
     {

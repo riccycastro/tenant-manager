@@ -17,7 +17,7 @@ services:
     resource: '../src/'
     exclude:
       - '../src/DependencyInjection/'
-      - '../src/Entity/'
+      - '../src/Containers/SecurityContainer/Infrastructure/Data/Doctrine/Entity/'
       - '../src/Ship/Core/Kernel.php'
 
   # add more service definitions when explicit configuration is needed

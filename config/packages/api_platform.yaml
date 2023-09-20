@@ -4,3 +4,6 @@ api_platform:
       JWT:
         name: Authorization
         type: header
+  mapping:
+    paths:
+     - '%kernel.project_dir%/src/Containers/TenantContainer/Infrastructure/ApiPlatform/Resource/'

@@ -6,4 +6,5 @@ namespace App\Containers\TenantContainer\Domain;
 
 final class Tenant
 {
+
 }

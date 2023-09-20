@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Containers\SharedSection\ContextContainer\Domain\Model;
+namespace App\Ship\Core\Domain\Model;
 
 final class User
 {

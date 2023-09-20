@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Ship\Core\Doctrine\Migrations;
+namespace App\Ship\Core\Infrastructure\Symfony\Doctrine\Migrations;
 
-use App\Ship\Core\Doctrine\Migrations\Interfaces\HashableMigrationInterface;
+use App\Ship\Core\Infrastructure\Symfony\Doctrine\Migrations\Interfaces\HashableMigrationInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\Version\MigrationFactory as MigrationFactoryInterface;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DoctrineMigrations;
 
 use App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity\UserEntity;
-use App\Ship\Core\Doctrine\Migrations\Interfaces\HashableMigrationInterface;
+use App\Ship\Core\Infrastructure\Symfony\Doctrine\Migrations\Interfaces\HashableMigrationInterface;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;

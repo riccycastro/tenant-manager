@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Containers\SharedSection\ContextContainer\Application;
+namespace App\Ship\Core\Application;
 
-use App\Containers\SharedSection\ContextContainer\Domain\Model\User;
+use App\Ship\Core\Domain\Model\User;
 
 final class Context
 {

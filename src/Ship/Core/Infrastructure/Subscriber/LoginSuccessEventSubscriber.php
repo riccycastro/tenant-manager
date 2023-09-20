@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Containers\SharedSection\ContextContainer\Infrastructure\Subscriber;
+namespace App\Ship\Core\Infrastructure\Subscriber;
 
 use App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity\UserEntity;
-use App\Containers\SharedSection\ContextContainer\Application\Context;
-use App\Containers\SharedSection\ContextContainer\Domain\Model\User;
+use App\Ship\Core\Application\Context;
+use App\Ship\Core\Domain\Model\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;

@@ -13,6 +13,9 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
 use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
 
+/**
+ * @implements ProcessorInterface<TenantResource>
+ */
 final class CreateTenantProcessor implements ProcessorInterface
 {
     public function __construct(

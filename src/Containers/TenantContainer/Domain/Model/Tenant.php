@@ -14,7 +14,7 @@ final class Tenant
     public function __construct(
         private readonly TenantId $id,
         private readonly TenantName $name, // @phpstan-ignore-line
-        private readonly TenantCode $code, // @phpstan-ignore-line
+        private readonly TenantCode $code,
         private readonly TenantDomainEmail $domainEmail, // @phpstan-ignore-line
         private readonly User $createdBy, // @phpstan-ignore-line
     ) {
@@ -23,5 +23,10 @@ final class Tenant
     public function getId(): TenantId
     {
         return $this->id;
+    }
+
+    public function hasSameCode(TenantCode $code): bool
+    {
+        return $this->code->isEqual($code);
     }
 }

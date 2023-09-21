@@ -22,4 +22,9 @@ final class TenantCode
     {
         return new self($code);
     }
+
+    public function isEqual(TenantCode $code): bool
+    {
+        return $this->code === $code->code;
+    }
 }

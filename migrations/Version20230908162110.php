@@ -22,12 +22,12 @@ final class Version20230908162110 extends AbstractMigration
         $this->addSql(
             '
         CREATE TABLE IF NOT EXISTS `user` (
-            `id` bigint unsigned not null primary key auto_increment,
+            `id` varchar(36) not null primary key,
             `name` varchar(255) not null,
             `email` varchar(255) not null unique,
             `password` varchar(255) not null,
             `is_active` tinyint(1) not null default 1,
-            `invited_by` bigint unsigned,
+            `invited_by` varchar(36),
             `created_at` datetime default current_timestamp,
             `updated_at` datetime default current_timestamp on update current_timestamp,
             `deleted_at` datetime default null,
@@ -38,10 +38,10 @@ final class Version20230908162110 extends AbstractMigration
         $this->addSql(
             '
         CREATE TABLE IF NOT EXISTS `system_property` (
-            `id` bigint unsigned not null primary key auto_increment,
+            `id` varchar(36) not null primary key,
             `key` varchar(255) not null,
             `value` varchar(255) not null,
-            `created_by` bigint unsigned,
+            `created_by` varchar(36) not null,
             `created_at` datetime default current_timestamp,
             `updated_at` datetime default current_timestamp on update current_timestamp,
             `deleted_at` datetime default null,
@@ -52,13 +52,13 @@ final class Version20230908162110 extends AbstractMigration
         $this->addSql(
             '
         CREATE TABLE IF NOT EXISTS `tenant` (
-            `id` bigint unsigned not null primary key auto_increment,
+            `id` varchar(36) not null primary key,
             `name` varchar(255) not null,
             `code` varchar(255) not null unique,
             `status` ENUM(\'waiting_provisioning\', \'provisioning\', \'ready_for_migration\', \'ready\', \'deactivated\') DEFAULT \'waiting_provisioning\',
             `domain_email` VARCHAR(100) NOT NULL UNIQUE,
             `is_active` TINYINT(1) DEFAULT 1,
-            `created_by` bigint unsigned not null,
+            `created_by` varchar(36) not null,
             `created_at` datetime default current_timestamp,
             `updated_at` datetime default current_timestamp on update current_timestamp,
             `deleted_at` datetime default null,
@@ -69,12 +69,12 @@ final class Version20230908162110 extends AbstractMigration
         $this->addSql(
             "
         CREATE TABLE IF NOT EXISTS `tenant_property` (
-            `id` bigint unsigned not null primary key auto_increment,
-            `tenant_id` bigint unsigned not null,
+            `id` varchar(36) not null primary key,
+            `tenant_id` varchar(36) not null,
             `name` varchar(255) not null,
             `value` varchar(255) not null,
             `type` enum('string', 'bool', 'int', 'float', 'array') default 'string',
-            `created_by` bigint unsigned,
+            `created_by` varchar(36) not null,
             `created_at` datetime default current_timestamp,
             `updated_at` datetime default current_timestamp on update current_timestamp,
             `deleted_at` datetime default null,

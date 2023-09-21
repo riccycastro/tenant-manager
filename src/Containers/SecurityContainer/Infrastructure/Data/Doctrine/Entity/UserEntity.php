@@ -13,9 +13,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id; // @phpstan-ignore-line
+    #[ORM\Column(type: 'string')]
+    private ?string $id; // @phpstan-ignore-line
 
     #[ORM\Column(type: 'string')]
     private ?string $email; // @phpstan-ignore-line
@@ -23,7 +22,7 @@ final class UserEntity implements UserInterface, PasswordAuthenticatedUserInterf
     #[ORM\Column(type: 'string')]
     private ?string $password; // @phpstan-ignore-line
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

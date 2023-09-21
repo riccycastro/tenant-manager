@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Ship\Core\Application;
 
-use App\Ship\Core\Domain\Model\User;
+use App\Ship\Core\Domain\Model\LoggedUser;
 
-final class Context
+final class Context implements FindsLoggedUserInterface
 {
-    private User $user;
+    private LoggedUser $loggedUser;
 
-    public function setUser(User $user): void
+    public function setLoggedUser(LoggedUser $loggedUser): void
     {
-        if (!isset($this->user)) {
-            $this->user = $user;
+        if (!isset($this->loggedUser)) {
+            $this->loggedUser = $loggedUser;
         }
     }
 
     /**
      * @throws \RuntimeException
      */
-    public function getUserId(): int
+    public function getLoggedUser(): LoggedUser
     {
-        if (isset($this->user)) {
-            return $this->user->getId();
+        if (isset($this->loggedUser)) {
+            return $this->loggedUser;
         }
 
         throw new \RuntimeException('Logged user is not defined');

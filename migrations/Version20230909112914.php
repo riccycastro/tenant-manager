@@ -8,6 +8,7 @@ use App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity\UserEnt
 use App\Ship\Core\Infrastructure\Symfony\Doctrine\Migrations\Interfaces\HashableMigrationInterface;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 /**
@@ -28,7 +29,8 @@ final class Version20230909112914 extends AbstractMigration implements HashableM
         $hashedPassword = $passwordHasher->hash($_ENV['SYSTEM_PASSWORD']);
         $this->addSql(
             sprintf(
-                "INSERT INTO `user` (`name`, `email`, `password`) VALUES('System', '%s', '%s');",
+                "INSERT INTO `user` (`id`, `name`, `email`, `password`) VALUES('%s', 'System', '%s', '%s');",
+                Uuid::uuid4()->toString(),
                 $_ENV['SYSTEM_EMAIL'],
                 $hashedPassword,
             )

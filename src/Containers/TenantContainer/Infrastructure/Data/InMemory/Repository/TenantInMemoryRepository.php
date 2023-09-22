@@ -8,29 +8,29 @@ use App\Containers\TenantContainer\Application\FindsTenantInterface;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
+use App\Ship\Core\Infrastructure\Data\InMemory\InMemoryRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-final class TenantInMemoryRepository implements PersistsTenantInterface, FindsTenantInterface
+/**
+ * @extends InMemoryRepository<Tenant>
+ */
+final class TenantInMemoryRepository extends InMemoryRepository implements PersistsTenantInterface, FindsTenantInterface
 {
-    /**
-     * @var Tenant[]
-     */
-    private array $tenants = [];
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
+    }
 
     public function saveAsNew(Tenant $tenant): Tenant
     {
-        $this->tenants[$tenant->getId()->toString()] = $tenant;
+        $this->entities[$tenant->getId()->toString()] = $tenant;
+        $this->eventDispatcher->dispatch($tenant->toTenantCreatedEvent());
 
         return $tenant;
     }
 
-    public function byCode(TenantCode $code): ?Tenant
+    public function withCode(TenantCode $code): FindsTenantInterface
     {
-        foreach ($this->tenants as $tenant) {
-            if ($tenant->hasSameCode($code)) {
-                return $tenant;
-            }
-        }
-
-        return null;
+        return $this->filter(fn (Tenant $tenant) => $tenant->hasSameCode($code));
     }
 }

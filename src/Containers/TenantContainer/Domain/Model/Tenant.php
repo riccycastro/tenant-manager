@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Containers\TenantContainer\Domain\Model;
 
+use App\Containers\TenantContainer\Domain\Event\TenantCreatedEvent;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
@@ -28,5 +29,10 @@ final class Tenant
     public function hasSameCode(TenantCode $code): bool
     {
         return $this->code->isEqual($code);
+    }
+
+    public function toTenantCreatedEvent(): TenantCreatedEvent
+    {
+        return new TenantCreatedEvent($this->code);
     }
 }

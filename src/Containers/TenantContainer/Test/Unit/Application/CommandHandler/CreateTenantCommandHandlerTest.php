@@ -4,10 +4,10 @@ namespace App\Containers\TenantContainer\Application\CommandHandler;
 
 use App\Containers\TenantContainer\Application\Exception\TenantCodeAlreadyExistException;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
-use App\Containers\TenantContainer\Domain\Command\CheckTenantCodeAvailabilityCommand;
 use App\Containers\TenantContainer\Domain\Command\CreateTenantCommand;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\Model\User;
+use App\Containers\TenantContainer\Domain\Query\CheckTenantCodeAvailabilityQuery;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
@@ -64,7 +64,7 @@ class CreateTenantCommandHandlerTest extends TestCase
             ->shouldBeCalled();
 
         $this->commandBus
-            ->dispatch(Argument::type(CheckTenantCodeAvailabilityCommand::class))
+            ->dispatch(Argument::type(CheckTenantCodeAvailabilityQuery::class))
             ->willReturn(true)
             ->shouldBeCalled();
 
@@ -96,7 +96,7 @@ class CreateTenantCommandHandlerTest extends TestCase
         );
 
         $this->commandBus
-            ->dispatch(Argument::type(CheckTenantCodeAvailabilityCommand::class))
+            ->dispatch(Argument::type(CheckTenantCodeAvailabilityQuery::class))
             ->willReturn(false)
             ->shouldBeCalled();
 

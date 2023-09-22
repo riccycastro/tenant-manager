@@ -7,5 +7,15 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 
 interface FindsTenantInterface
 {
-    public function byCode(TenantCode $code): ?Tenant;
+    public function withCode(TenantCode $code): FindsTenantInterface;
+
+    /**
+     * @return Tenant|null
+     */
+    public function getResult();
+
+    /**
+     * @return Tenant[]
+     */
+    public function getResults(): array;
 }

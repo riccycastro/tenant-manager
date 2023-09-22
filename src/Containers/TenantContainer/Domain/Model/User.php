@@ -11,7 +11,7 @@ use App\Ship\Core\Domain\Model\LoggedUser;
 final class User
 {
     public function __construct(
-        private UserId $id, // @phpstan-ignore-line
+        private UserId $id,
         private UserEmail $email, // @phpstan-ignore-line
     ) {
     }
@@ -22,5 +22,10 @@ final class User
             UserId::fromString($loggedUser->getId()),
             UserEmail::fromString($loggedUser->getEmail()),
         );
+    }
+
+    public function getId(): UserId
+    {
+        return $this->id;
     }
 }

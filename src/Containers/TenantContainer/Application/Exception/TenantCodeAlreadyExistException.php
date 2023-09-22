@@ -12,7 +12,7 @@ final class TenantCodeAlreadyExistException extends ConflictHttpException
     public static function fromCode(TenantCode $code): self
     {
         return new self(
-            sprintf('Tenant with code %s already exists', $code->code)
+            sprintf('Tenant with code %s already exists', $code->toString())
         );
     }
 }

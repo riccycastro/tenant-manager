@@ -14,11 +14,11 @@ final class CreateTenantDatabaseMessageHandler
 {
     public function __construct(
         private readonly QueryBusInterface $queryBus,
-    ) {}
+    ) {
+    }
 
     public function __invoke(CreateTenantDatabaseMessage $message): void
     {
-
         $tenantCode = $message->tenantCode;
 
         $tenant = $this->queryBus->ask(new FindTenantQuery(code: $message->tenantCode));

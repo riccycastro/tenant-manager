@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'user')]
-final class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
+class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string')]

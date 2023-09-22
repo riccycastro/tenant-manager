@@ -8,7 +8,7 @@ use Webmozart\Assert\Assert;
 
 final class TenantName
 {
-    public readonly string $name;
+    private readonly string $name;
 
     private function __construct(string $name)
     {
@@ -21,5 +21,10 @@ final class TenantName
     public static function fromString(string $name): self
     {
         return new self($name);
+    }
+
+    public function toString(): string
+    {
+        return $this->name;
     }
 }

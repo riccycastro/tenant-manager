@@ -11,7 +11,7 @@ use Ramsey\Uuid\UuidInterface;
 
 final class TenantId
 {
-    public readonly UuidInterface $id;
+    private readonly UuidInterface $id;
 
     private function __construct(UuidInterface $id)
     {

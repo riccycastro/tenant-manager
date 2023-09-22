@@ -8,7 +8,7 @@ use Webmozart\Assert\Assert;
 
 final class TenantCode
 {
-    public readonly string $code;
+    private readonly string $code;
 
     private function __construct(string $code)
     {
@@ -26,5 +26,10 @@ final class TenantCode
     public function isEqual(TenantCode $code): bool
     {
         return $this->code === $code->code;
+    }
+
+    public function toString(): string
+    {
+        return $this->code;
     }
 }

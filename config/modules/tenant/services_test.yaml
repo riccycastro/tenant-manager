@@ -1,0 +1,10 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  App\Containers\TenantContainer\Application\FindsTenantInterface:
+    alias: App\Containers\TenantContainer\Infrastructure\Data\InMemory\Repository\TenantInMemoryRepository
+
+  App\Containers\TenantContainer\Application\PersistsTenantInterface:
+    alias: App\Containers\TenantContainer\Infrastructure\Data\InMemory\Repository\TenantInMemoryRepository

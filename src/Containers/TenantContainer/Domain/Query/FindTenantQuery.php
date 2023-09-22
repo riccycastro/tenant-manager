@@ -11,5 +11,6 @@ final class FindTenantQuery implements QueryInterface
 {
     public function __construct(
         public readonly ?TenantCode $code = null
-    ) {}
+    ) {
+    }
 }

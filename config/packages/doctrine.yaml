@@ -20,6 +20,11 @@ doctrine:
         dir: '%kernel.project_dir%/src/Containers/SecurityContainer/Infrastructure/Data/Doctrine/Entity'
         prefix: 'App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity'
         alias: security_container
+      tenant_container:
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/Containers/TenantContainer/Infrastructure/Data/Doctrine/Entity'
+        prefix: 'App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity'
+        alias: tenant_container
 
 when@test:
   doctrine:

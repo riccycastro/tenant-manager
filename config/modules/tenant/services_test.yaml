@@ -8,3 +8,6 @@ services:
 
   App\Containers\TenantContainer\Application\PersistsTenantInterface:
     alias: App\Containers\TenantContainer\Infrastructure\Data\InMemory\Repository\TenantInMemoryRepository
+
+  App\Containers\TenantContainer\Application\UpdatesTenantInterface:
+    alias: App\Containers\TenantContainer\Infrastructure\Data\InMemory\Repository\TenantInMemoryRepository

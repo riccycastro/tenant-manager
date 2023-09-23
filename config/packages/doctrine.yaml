@@ -1,6 +1,11 @@
 doctrine:
   dbal:
-    url: '%env(resolve:DATABASE_URL)%'
+    default_connection: default
+    connections:
+      default:
+        url: '%env(resolve:DATABASE_URL)%'
+      master:
+        url: '%env(resolve:DATABASE_URL_ROOT)%'
 
     # IMPORTANT: You MUST configure your server version,
     # either here or in the DATABASE_URL env var (see .env file)
@@ -9,22 +14,28 @@ doctrine:
     profiling_collect_backtrace: '%kernel.debug%'
   orm:
     auto_generate_proxy_classes: true
-    enable_lazy_ghost_objects: true
-    report_fields_where_declared: true
-    validate_xml_mapping: true
-    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-    auto_mapping: true
-    mappings:
-      security_container:
-        is_bundle: false
-        dir: '%kernel.project_dir%/src/Containers/SecurityContainer/Infrastructure/Data/Doctrine/Entity'
-        prefix: 'App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity'
-        alias: security_container
-      tenant_container:
-        is_bundle: false
-        dir: '%kernel.project_dir%/src/Containers/TenantContainer/Infrastructure/Data/Doctrine/Entity'
-        prefix: 'App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity'
-        alias: tenant_container
+    default_entity_manager: default
+    entity_managers:
+      default:
+        connection: default
+        enable_lazy_ghost_objects: true
+        report_fields_where_declared: true
+        validate_xml_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+          security_container:
+            is_bundle: false
+            dir: '%kernel.project_dir%/src/Containers/SecurityContainer/Infrastructure/Data/Doctrine/Entity'
+            prefix: 'App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity'
+            alias: security_container
+          tenant_container:
+            is_bundle: false
+            dir: '%kernel.project_dir%/src/Containers/TenantContainer/Infrastructure/Data/Doctrine/Entity'
+            prefix: 'App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity'
+            alias: tenant_container
+      master:
+        connection: master
 
 when@test:
   doctrine:

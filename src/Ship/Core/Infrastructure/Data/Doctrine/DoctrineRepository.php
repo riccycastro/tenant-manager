@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Ship\Core\Infrastructure\Data\Doctrine;
 
 use App\Ship\Core\Domain\Repository\RepositoryInterface;
-use App\Ship\Core\Infrastructure\Exception\NonUniqueResultException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectRepository;
@@ -17,7 +16,7 @@ use Doctrine\Persistence\ObjectRepository;
  */
 abstract class DoctrineRepository implements RepositoryInterface
 {
-    private QueryBuilder $queryBuilder;
+    protected QueryBuilder $queryBuilder;
 
     public function __construct(
         protected EntityManagerInterface $em,
@@ -27,30 +26,6 @@ abstract class DoctrineRepository implements RepositoryInterface
         $this->queryBuilder = $this->em->createQueryBuilder()
             ->select($alias)
             ->from($entityClass, $alias);
-    }
-
-    /**
-     * @return T|null
-     *
-     * @throws NonUniqueResultException
-     */
-    public function getResult()
-    {
-        $cloned = clone $this;
-
-        try {
-            return $cloned->queryBuilder->getQuery()->getOneOrNullResult();
-        } catch (\Doctrine\ORM\NonUniqueResultException $e) {
-            throw new NonUniqueResultException();
-        }
-    }
-
-    /**
-     * @return T[]
-     */
-    public function getResults(): array
-    {
-        return [];
     }
 
     protected function filter(callable $filter): static

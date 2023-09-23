@@ -6,13 +6,18 @@ namespace App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Repository
 
 use App\Containers\TenantContainer\Application\FindsTenantInterface;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
+use App\Containers\TenantContainer\Application\UpdatesTenantInterface;
+use App\Containers\TenantContainer\Domain\Exception\TenantNotFoundException;
 use App\Containers\TenantContainer\Domain\Exception\UserNotFoundException;
+use App\Containers\TenantContainer\Domain\Model\NewTenant;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\UserId;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\TenantEntity;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\UserEntity;
 use App\Ship\Core\Infrastructure\Data\Doctrine\DoctrineRepository;
+use App\Ship\Core\Infrastructure\Data\Doctrine\GetResultTrait;
+use App\Ship\Core\Infrastructure\Exception\NonUniqueResultException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -20,8 +25,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @extends DoctrineRepository<TenantEntity>
  */
-final class TenantRepository extends DoctrineRepository implements PersistsTenantInterface, FindsTenantInterface
+final class TenantRepository extends DoctrineRepository implements PersistsTenantInterface, UpdatesTenantInterface, FindsTenantInterface
 {
+    /**
+     * @use GetResultTrait<Tenant, TenantEntity>
+     */
+    use GetResultTrait;
+
     private const ENTITY_CLASS = TenantEntity::class;
     private const ALIAS = 'tenant';
 
@@ -32,18 +42,18 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
         parent::__construct($em, self::ENTITY_CLASS, self::ALIAS);
     }
 
-    public function saveAsNew(Tenant $tenant): Tenant
+    public function saveAsNew(NewTenant $newTenant): Tenant
     {
-        $data = $this->preparePersistenceDataFromTenant($tenant);
+        $data = $this->preparePersistenceDataFromTenant($newTenant);
 
         $entity = TenantEntity::fromArray($data);
 
         $this->em->persist($entity);
         $this->em->flush();
 
-        $this->eventDispatcher->dispatch($tenant->toTenantCreatedEvent());
+        $this->eventDispatcher->dispatch($newTenant->toTenantCreatedEvent());
 
-        return $tenant;
+        return $entity->toTenant();
     }
 
     /**
@@ -55,15 +65,10 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
      *          createdBy: UserEntity,
      *          }
      */
-    private function preparePersistenceDataFromTenant(Tenant $tenant): array
+    private function preparePersistenceDataFromTenant(NewTenant $newTenant): array
     {
-        $data = [];
-
-        $data['id'] = $tenant->getId()->toString();
-        $data['name'] = $tenant->getName()->toString();
-        $data['code'] = $tenant->getCode()->toString();
-        $data['domainEmail'] = $tenant->getDomainEmail()->toString();
-        $data['createdBy'] = $this->findUserEntity($tenant->getCreatedByIdentifier());
+        $data = $newTenant->toArray();
+        $data['createdBy'] = $this->findUserEntity(UserId::fromString($data['createdById']));
 
         return $data;
     }
@@ -80,6 +85,24 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
         throw UserNotFoundException::fromUserId($userId);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function save(Tenant $tenant): Tenant
+    {
+        $tenantEntity = $this->withCode($tenant->getCode())->getEntityResult();
+
+        if (null === $tenantEntity) {
+            throw TenantNotFoundException::fromTenantCode($tenant->getCode());
+        }
+
+        $tenantEntity->update($tenant);
+
+        $this->em->flush();
+
+        return $tenantEntity->toTenant();
+    }
+
     public function withCode(TenantCode $code): static
     {
         return $this->filter(static function (QueryBuilder $qb) use ($code): void {
@@ -88,5 +111,13 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
             )
                 ->setParameter('code', $code->toString());
         });
+    }
+
+    /**
+     * @param TenantEntity|null $entity
+     */
+    protected function entityToModel($entity): ?Tenant
+    {
+        return $entity?->toTenant();
     }
 }

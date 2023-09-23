@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Containers\TenantContainer\Domain\Model;
 
-use App\Containers\TenantContainer\Domain\Event\TenantCreatedEvent;
+use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
+use App\Containers\TenantContainer\Domain\Exception\InvalidTenantStatusWorkFlowException;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
-use App\Containers\TenantContainer\Domain\ValueObject\UserId;
 
 final class Tenant
 {
@@ -19,12 +19,9 @@ final class Tenant
         private readonly TenantCode $code,
         private readonly TenantDomainEmail $domainEmail,
         private readonly User $createdBy,
+        private readonly TenantStatus $status,
+        private readonly bool $isActive,
     ) {
-    }
-
-    public function getId(): TenantId
-    {
-        return $this->id;
     }
 
     public function getName(): TenantName
@@ -42,9 +39,19 @@ final class Tenant
         return $this->domainEmail;
     }
 
-    public function getCreatedByIdentifier(): UserId
+    public function getId(): TenantId
     {
-        return $this->createdBy->getId();
+        return $this->id;
+    }
+
+    public function getStatus(): TenantStatus
+    {
+        return $this->status;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
     }
 
     public function hasSameCode(TenantCode $code): bool
@@ -52,8 +59,40 @@ final class Tenant
         return $this->code->isEqual($code);
     }
 
-    public function toTenantCreatedEvent(): TenantCreatedEvent
+    /**
+     * @throws InvalidTenantStatusWorkFlowException
+     */
+    public function update(
+        ?TenantStatus $status,
+    ): self {
+        return new self(
+            $this->id,
+            $this->name,
+            $this->code,
+            $this->domainEmail,
+            $this->createdBy,
+            null !== $status ? $this->statusWorkFlow($status) : $this->status,
+            $this->isActive
+        );
+    }
+
+    /**
+     * @throws InvalidTenantStatusWorkFlowException
+     */
+    private function statusWorkFlow(TenantStatus $nextStatus): TenantStatus
     {
-        return new TenantCreatedEvent($this->code);
+        $statusFlow = [
+            TenantStatus::WAITING_PROVISIONING->value => [TenantStatus::PROVISIONING],
+            TenantStatus::PROVISIONING->value => [TenantStatus::WAITING_PROVISIONING, TenantStatus::READY_FOR_MIGRATION],
+            TenantStatus::READY_FOR_MIGRATION->value => [TenantStatus::PROVISIONING, TenantStatus::READY],
+            TenantStatus::READY->value => [TenantStatus::DEACTIVATED],
+            TenantStatus::DEACTIVATED->value => [TenantStatus::READY],
+        ];
+
+        if (in_array($nextStatus, $statusFlow[$this->status->value])) {
+            return $nextStatus;
+        }
+
+        throw InvalidTenantStatusWorkFlowException::fromTenantStatusWorkflow($nextStatus, $this->status, $statusFlow[$this->status->value]);
     }
 }

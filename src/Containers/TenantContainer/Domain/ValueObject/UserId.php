@@ -11,7 +11,7 @@ use Ramsey\Uuid\UuidInterface;
 
 final class UserId
 {
-    public UuidInterface $id;
+    private UuidInterface $id;
 
     private function __construct(UuidInterface $id)
     {

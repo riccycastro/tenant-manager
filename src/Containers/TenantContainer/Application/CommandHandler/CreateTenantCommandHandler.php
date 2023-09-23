@@ -7,6 +7,7 @@ namespace App\Containers\TenantContainer\Application\CommandHandler;
 use App\Containers\TenantContainer\Application\Exception\TenantCodeAlreadyExistException;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
 use App\Containers\TenantContainer\Domain\Command\CreateTenantCommand;
+use App\Containers\TenantContainer\Domain\Model\NewTenant;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\Query\CheckTenantCodeAvailabilityQuery;
 use App\Ship\Core\Application\CommandHandler\CommandHandlerInterface;
@@ -26,7 +27,7 @@ final class CreateTenantCommandHandler implements CommandHandlerInterface
             throw TenantCodeAlreadyExistException::fromCode($command->code);
         }
 
-        $tenant = new Tenant(
+        $newTenant = new NewTenant(
             id: $command->id,
             name: $command->name,
             code: $command->code,
@@ -34,6 +35,6 @@ final class CreateTenantCommandHandler implements CommandHandlerInterface
             createdBy: $command->user,
         );
 
-        return $this->persistTenant->saveAsNew($tenant);
+        return $this->persistTenant->saveAsNew($newTenant);
     }
 }

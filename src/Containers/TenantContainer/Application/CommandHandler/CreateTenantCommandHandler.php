@@ -5,25 +5,24 @@ declare(strict_types=1);
 namespace App\Containers\TenantContainer\Application\CommandHandler;
 
 use App\Containers\TenantContainer\Application\Exception\TenantCodeAlreadyExistException;
+use App\Containers\TenantContainer\Application\FindsTenantInterface;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
 use App\Containers\TenantContainer\Domain\Command\CreateTenantCommand;
 use App\Containers\TenantContainer\Domain\Model\NewTenant;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
-use App\Containers\TenantContainer\Domain\Query\CheckTenantCodeAvailabilityQuery;
 use App\Ship\Core\Application\CommandHandler\CommandHandlerInterface;
-use App\Ship\Core\Application\QueryHandler\QueryBusInterface;
 
 final class CreateTenantCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly PersistsTenantInterface $persistTenant,
-        private readonly QueryBusInterface $queryBus,
+        private readonly FindsTenantInterface $findsTenant,
     ) {
     }
 
     public function __invoke(CreateTenantCommand $command): Tenant
     {
-        if (!$this->queryBus->ask(new CheckTenantCodeAvailabilityQuery($command->code))) {
+        if (null !== $this->findsTenant->withCode($command->code)->getResult()) {
             throw TenantCodeAlreadyExistException::fromCode($command->code);
         }
 

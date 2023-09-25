@@ -3,18 +3,19 @@
 namespace App\Containers\TenantContainer\Application\CommandHandler;
 
 use App\Containers\TenantContainer\Application\Exception\TenantCodeAlreadyExistException;
+use App\Containers\TenantContainer\Application\FindsTenantInterface;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
 use App\Containers\TenantContainer\Domain\Command\CreateTenantCommand;
+use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
+use App\Containers\TenantContainer\Domain\Model\NewTenant;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\Model\User;
-use App\Containers\TenantContainer\Domain\Query\CheckTenantCodeAvailabilityQuery;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
 use App\Containers\TenantContainer\Domain\ValueObject\UserEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\UserId;
-use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
 use App\Ship\Core\Application\CommandHandler\CommandHandlerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -28,7 +29,7 @@ class CreateTenantCommandHandlerTest extends TestCase
     private CreateTenantCommandHandler $sut;
 
     private ObjectProphecy|PersistsTenantInterface $persistsTenant;
-    private ObjectProphecy|CommandBusInterface $commandBus;
+    private ObjectProphecy|FindsTenantInterface $findsTenant;
 
     public function testItIsCommandHandler(): void
     {
@@ -47,7 +48,13 @@ class CreateTenantCommandHandlerTest extends TestCase
         );
 
         $tenant = new Tenant(
-            $id, $name, $code, $domainEmail, $user
+            $id,
+            $name,
+            $code,
+            $domainEmail,
+            $user,
+            TenantStatus::WAITING_PROVISIONING,
+            false,
         );
 
         $createTenantCommand = new CreateTenantCommand(
@@ -58,14 +65,19 @@ class CreateTenantCommandHandlerTest extends TestCase
             user: $user
         );
 
-        $this->persistsTenant
-            ->saveAsNew(Argument::type(Tenant::class))
-            ->willReturn($tenant)
+        $this->findsTenant
+            ->withCode($createTenantCommand->code)
+            ->willReturn($this->findsTenant)
             ->shouldBeCalled();
 
-        $this->commandBus
-            ->dispatch(Argument::type(CheckTenantCodeAvailabilityQuery::class))
-            ->willReturn(true)
+        $this->findsTenant
+            ->getResult()
+            ->willReturn(null)
+            ->shouldBeCalled();
+
+        $this->persistsTenant
+            ->saveAsNew(Argument::type(NewTenant::class))
+            ->willReturn($tenant)
             ->shouldBeCalled();
 
         $result = ($this->sut)($createTenantCommand);
@@ -95,24 +107,37 @@ class CreateTenantCommandHandlerTest extends TestCase
             user: $user
         );
 
-        $this->commandBus
-            ->dispatch(Argument::type(CheckTenantCodeAvailabilityQuery::class))
-            ->willReturn(false)
+        $tenant = new Tenant(
+            $id,
+            $name,
+            $code,
+            $domainEmail,
+            $user,
+            TenantStatus::WAITING_PROVISIONING,
+            false,
+        );
+
+        $this->findsTenant
+            ->withCode($createTenantCommand->code)
+            ->willReturn($this->findsTenant)
             ->shouldBeCalled();
 
-        $result = ($this->sut)($createTenantCommand);
+        $this->findsTenant
+            ->getResult()
+            ->willReturn($tenant)
+            ->shouldBeCalled();
 
-        self::assertInstanceOf(Tenant::class, $result);
+        ($this->sut)($createTenantCommand);
     }
 
     protected function setUp(): void
     {
         $this->persistsTenant = $this->prophesize(PersistsTenantInterface::class);
-        $this->commandBus = $this->prophesize(CommandBusInterface::class);
+        $this->findsTenant = $this->prophesize(FindsTenantInterface::class);
 
         $this->sut = new CreateTenantCommandHandler(
             $this->persistsTenant->reveal(),
-            $this->commandBus->reveal(),
+            $this->findsTenant->reveal(),
         );
     }
 }

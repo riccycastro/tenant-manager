@@ -5,42 +5,57 @@ declare(strict_types=1);
 namespace App\Containers\TenantContainer\Infrastructure\Service;
 
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class TenantDatabaseService
 {
-    private EntityManagerInterface $entityManagerMaster;
-    private EntityManagerInterface $entityManager;
+    private Connection $connectionMaster;
+    private Connection $connectionDefault;
     private string $databasePrefix;
 
     public function __construct(
         ManagerRegistry $doctrine,
     ) {
-        $this->entityManagerMaster = $doctrine->getManager('master'); // @phpstan-ignore-line
-        $this->entityManager = $doctrine->getManager(); // @phpstan-ignore-line
+        $this->connectionMaster = $doctrine->getConnection('master'); // @phpstan-ignore-line
+        $this->connectionDefault = $doctrine->getConnection('default'); // @phpstan-ignore-line
         $this->databasePrefix = $_ENV['DATABASE_PREFIX'] ?? '';
     }
 
     /**
      * @throws \Exception
      */
-    public function createTenantDatabaseUser(string $tenantCode, string $password): void
+    public function createTenantDatabaseUser(TenantCode $tenantCode, string $password): void
     {
-        $connection = $this->entityManagerMaster->getConnection();
-        $connection->executeQuery("CREATE USER `$tenantCode`@`%` IDENTIFIED BY '$password'");
-        $connection->executeQuery(
-            "GRANT INSERT, UPDATE, SELECT, CREATE, REFERENCES, LOCK TABLES ON {$this->databasePrefix}{$tenantCode}.* TO `$tenantCode`@`%`; FLUSH PRIVILEGES;"
+        $this->connectionMaster->executeQuery(
+            sprintf(
+                "CREATE USER `%s`@`%%` IDENTIFIED BY '%s'",
+                $tenantCode->toString(),
+                $password
+            )
+        );
+        $this->connectionMaster->executeQuery(
+            sprintf(
+                'GRANT INSERT, UPDATE, SELECT, CREATE, REFERENCES, LOCK TABLES ON %s%s.* TO `%s`@`%%`; FLUSH PRIVILEGES;',
+                $this->databasePrefix,
+                $tenantCode->toString(),
+                $tenantCode->toString(),
+            )
         );
     }
 
     /**
      * @throws \Exception
      */
-    public function createDatabase(string $tenantCode): void
+    public function createDatabase(TenantCode $tenantCode): void
     {
-        $this->entityManagerMaster->getConnection()->executeQuery(
-            "CREATE DATABASE IF NOT EXISTS {$this->databasePrefix}{$tenantCode} CHARACTER SET utf8 COLLATE utf8_general_ci;"
+        $this->connectionMaster->executeQuery(
+            sprintf(
+                'CREATE DATABASE IF NOT EXISTS %s%s CHARACTER SET utf8 COLLATE utf8_general_ci;',
+                $this->databasePrefix,
+                $tenantCode->toString(),
+            )
         );
     }
 
@@ -50,7 +65,7 @@ final class TenantDatabaseService
     public function databaseExists(TenantCode $tenantCode): bool
     {
         // todo@rcastro - prepare statement
-        $result = $this->entityManagerMaster->getConnection()->executeQuery(
+        $result = $this->connectionMaster->executeQuery(
             sprintf(
                 "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '%s%s';",
                 $this->databasePrefix,
@@ -61,21 +76,29 @@ final class TenantDatabaseService
         return (bool) $result->fetchAssociative();
     }
 
+    /**
+     * @throws Exception
+     */
     public function beginDatabaseTransaction(): void
     {
-        $this->entityManager->beginTransaction();
-        $this->entityManagerMaster->beginTransaction();
+        $this->connectionDefault->beginTransaction();
     }
 
+    /**
+     * @throws Exception
+     */
     public function commitDatabaseTransaction(): void
     {
-        $this->entityManagerMaster->commit();
-        $this->entityManager->commit();
+        if ($this->connectionDefault->isTransactionActive()) {
+            $this->connectionDefault->commit();
+        }
     }
 
+    /**
+     * @throws Exception
+     */
     public function rollbackDatabaseTransaction(): void
     {
-        $this->entityManagerMaster->rollback();
-        $this->entityManager->rollback();
+        $this->connectionDefault->rollback();
     }
 }

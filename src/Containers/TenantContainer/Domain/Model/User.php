@@ -12,7 +12,7 @@ final class User
 {
     public function __construct(
         private UserId $id,
-        private UserEmail $email, // @phpstan-ignore-line
+        private UserEmail $email,
     ) {
     }
 
@@ -27,5 +27,10 @@ final class User
     public function getId(): UserId
     {
         return $this->id;
+    }
+
+    public function getEmail(): UserEmail
+    {
+        return $this->email;
     }
 }

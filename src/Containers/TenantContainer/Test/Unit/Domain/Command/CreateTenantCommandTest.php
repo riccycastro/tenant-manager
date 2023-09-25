@@ -35,16 +35,44 @@ final class CreateTenantCommandTest extends TestCase
         self::assertTrue($sut->getProperty('user')->isReadOnly());
     }
 
+    public function testItWontChangeTheValuesWhenConstructing(): void
+    {
+        $tenantId = TenantId::create();
+        $tenantName = TenantName::fromString('aName');
+        $tenantCode = TenantCode::fromString('a_code');
+        $tenantDomainEmail = TenantDomainEmail::fromString('@tenant.com');
+        $userId = UserId::create();
+        $userEmail = UserEmail::fromString('user@tenant.com');
+
+        $sut = new CreateTenantCommand(
+            id: $tenantId,
+            name: $tenantName,
+            code: $tenantCode,
+            domainEmail: $tenantDomainEmail,
+            user: new User(
+                $userId,
+                $userEmail,
+            )
+        );
+
+        self::assertEquals($tenantId, $sut->id);
+        self::assertEquals($tenantName, $sut->name);
+        self::assertEquals($tenantCode, $sut->code);
+        self::assertEquals($tenantDomainEmail, $sut->domainEmail);
+        self::assertEquals($userId, $sut->user->getId());
+        self::assertEquals($userEmail, $sut->user->getEmail());
+    }
+
     private function buildSubjectUnderTest(): CreateTenantCommand
     {
         return new CreateTenantCommand(
             id: TenantId::create(),
             name: TenantName::fromString('aName'),
-            code: TenantCode::fromString('a_cde'),
+            code: TenantCode::fromString('a_code'),
             domainEmail: TenantDomainEmail::fromString('@tenant.com'),
             user: new User(
                 UserId::create(),
-                UserEmail::fromString('user@tenant.com')
+                UserEmail::fromString('user@tenant.com'),
             )
         );
     }

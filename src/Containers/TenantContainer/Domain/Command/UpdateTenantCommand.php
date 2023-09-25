@@ -12,7 +12,7 @@ final class UpdateTenantCommand implements CommandInterface
 {
     public function __construct(
         public readonly TenantCode $code,
-        public readonly ?TenantStatus $status,
+        public readonly ?TenantStatus $status = null,
     ) {
     }
 }

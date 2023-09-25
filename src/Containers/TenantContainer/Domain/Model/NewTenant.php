@@ -22,21 +22,6 @@ final class NewTenant
     ) {
     }
 
-    public function getName(): TenantName
-    {
-        return $this->name;
-    }
-
-    public function getCode(): TenantCode
-    {
-        return $this->code;
-    }
-
-    public function getId(): TenantId
-    {
-        return $this->id;
-    }
-
     public function toTenantCreatedEvent(): TenantCreatedEvent
     {
         return new TenantCreatedEvent($this->code);
@@ -56,13 +41,7 @@ final class NewTenant
     }
 
     /**
-     * @return  array{
-     *          id: string,
-     *          name: string,
-     *          code: string,
-     *          domainEmail: string,
-     *          createdById: string,
-     *          }
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -71,7 +50,7 @@ final class NewTenant
             'name' => $this->name->toString(),
             'code' => $this->code->toString(),
             'domainEmail' => $this->domainEmail->toString(),
-            'createdById' => $this->createdBy->getId()->toString(),
+            'createdBy' => $this->createdBy->toArray(),
         ];
     }
 }

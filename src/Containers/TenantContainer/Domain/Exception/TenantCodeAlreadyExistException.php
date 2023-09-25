@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Containers\TenantContainer\Application\Exception;
+namespace App\Containers\TenantContainer\Domain\Exception;
 
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;

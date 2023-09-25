@@ -57,18 +57,12 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
     }
 
     /**
-     * @return  array{
-     *          id: string,
-     *          name: string,
-     *          code: string,
-     *          domainEmail: string,
-     *          createdBy: UserEntity,
-     *          }
+     * @return array<string, mixed>
      */
     private function preparePersistenceDataFromTenant(NewTenant $newTenant): array
     {
         $data = $newTenant->toArray();
-        $data['createdBy'] = $this->findUserEntity(UserId::fromString($data['createdById']));
+        $data['createdBy'] = $this->findUserEntity(UserId::fromString($data['createdBy']['id']));
 
         return $data;
     }

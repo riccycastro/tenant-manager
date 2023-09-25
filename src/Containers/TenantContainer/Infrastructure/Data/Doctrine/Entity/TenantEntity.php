@@ -46,13 +46,7 @@ class TenantEntity
     }
 
     /**
-     * @param array{
-     *     id: string,
-     *     name: string,
-     *     code: string,
-     *     domainEmail: string,
-     *    createdBy: UserEntity,
-     * } $data
+     * @param array<string, mixed> $data
      */
     public static function fromArray(array $data): self
     {

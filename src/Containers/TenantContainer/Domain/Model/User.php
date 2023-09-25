@@ -11,8 +11,8 @@ use App\Ship\Core\Domain\Model\LoggedUser;
 final class User
 {
     public function __construct(
-        private UserId $id,
-        private UserEmail $email,
+        private readonly UserId $id,
+        private readonly UserEmail $email,
     ) {
     }
 
@@ -32,5 +32,16 @@ final class User
     public function getEmail(): UserEmail
     {
         return $this->email;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id->toString(),
+            'email' => $this->email->toString(),
+        ];
     }
 }

@@ -24,7 +24,7 @@ final class CreateTenantCommandTest extends TestCase
         self::assertInstanceOf(CommandInterface::class, $sut);
     }
 
-    public function testIdPropertyIsReadOnly(): void
+    public function testPropertiesAreReadOnly(): void
     {
         $sut = new \ReflectionClass(CreateTenantCommand::class);
 

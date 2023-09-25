@@ -84,7 +84,7 @@ final class Tenant
         $statusFlow = [
             TenantStatus::WAITING_PROVISIONING->value => [TenantStatus::PROVISIONING],
             TenantStatus::PROVISIONING->value => [TenantStatus::WAITING_PROVISIONING, TenantStatus::READY_FOR_MIGRATION],
-            TenantStatus::READY_FOR_MIGRATION->value => [TenantStatus::PROVISIONING, TenantStatus::READY],
+            TenantStatus::READY_FOR_MIGRATION->value => [TenantStatus::READY],
             TenantStatus::READY->value => [TenantStatus::DEACTIVATED],
             TenantStatus::DEACTIVATED->value => [TenantStatus::READY],
         ];
@@ -94,5 +94,21 @@ final class Tenant
         }
 
         throw InvalidTenantStatusWorkFlowException::fromTenantStatusWorkflow($nextStatus, $this->status, $statusFlow[$this->status->value]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id->toString(),
+            'name' => $this->name->toString(),
+            'code' => $this->code->toString(),
+            'domainEmail' => $this->domainEmail->toString(),
+            'createdBy' => $this->createdBy->toArray(),
+            'status' => $this->status->value,
+            'isActive' => $this->isActive,
+        ];
     }
 }

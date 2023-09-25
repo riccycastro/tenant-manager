@@ -8,7 +8,7 @@ use Webmozart\Assert\Assert;
 
 final class UserEmail
 {
-    public readonly string $email;
+    private readonly string $email;
 
     private function __construct(string $email)
     {
@@ -20,5 +20,10 @@ final class UserEmail
     public static function fromString(string $email): self
     {
         return new self($email);
+    }
+
+    public function toString(): string
+    {
+        return $this->email;
     }
 }

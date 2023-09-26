@@ -8,7 +8,6 @@ use App\Containers\TenantContainer\Domain\Query\FindTenantQuery;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Ship\Core\Domain\Query\QueryInterface;
 use PHPUnit\Framework\TestCase;
-use function PHPUnit\Framework\assertEquals;
 
 final class FindTenantQueryTest extends TestCase
 {
@@ -31,6 +30,6 @@ final class FindTenantQueryTest extends TestCase
         $code = TenantCode::fromString('a_a_s');
         $sut = new FindTenantQuery($code);
 
-        assertEquals($code, $sut->code);
+        self::assertEquals($code, $sut->code);
     }
 }

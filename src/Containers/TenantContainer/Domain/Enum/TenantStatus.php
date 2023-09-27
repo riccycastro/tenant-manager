@@ -11,4 +11,12 @@ enum TenantStatus: string
     case READY_FOR_MIGRATION = 'ready_for_migration';
     case READY = 'ready';
     case DEACTIVATED = 'deactivated';
+
+    /**
+     * @return string[]
+     */
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
 }

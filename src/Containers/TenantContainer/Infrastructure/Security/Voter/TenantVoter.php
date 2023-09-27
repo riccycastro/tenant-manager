@@ -15,10 +15,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class TenantVoter extends Voter
 {
     public const TENANT_CREATE = 'tenant.create';
+    public const TENANT_UPDATE = 'tenant.update';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::TENANT_CREATE])
+        return in_array($attribute, [self::TENANT_CREATE, self::TENANT_UPDATE])
             && $subject instanceof TenantResource;
     }
 
@@ -34,6 +35,8 @@ final class TenantVoter extends Voter
 
         switch ($attribute) {
             case self::TENANT_CREATE:
+                return true;
+            case self::TENANT_UPDATE:
                 return true;
         }
 

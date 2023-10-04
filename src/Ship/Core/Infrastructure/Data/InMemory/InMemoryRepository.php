@@ -42,7 +42,14 @@ abstract class InMemoryRepository implements RepositoryInterface
      */
     public function getResults(): array
     {
+        // todo@rcastro - implement this
         return [];
+    }
+
+    public function withPagination(int $page, int $itemsPerPage): static
+    {
+        // todo@rcastro - implement this
+        return $this;
     }
 
     /**

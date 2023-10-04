@@ -20,7 +20,7 @@ final class TenantItemProvider implements ProviderInterface
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): TenantResource
     {
         $tenantCode = TenantCode::fromString($uriVariables['code']);
 

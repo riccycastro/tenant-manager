@@ -6,12 +6,15 @@ namespace App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\OpenApi\TenantCodeFilter;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Processor\CreateTenantProcessor;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Processor\UpdateTenantProcessor;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Provider\TenantCollectionProvider;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Provider\TenantItemProvider;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -25,7 +28,11 @@ const TENANT_WRITE = 'tenant_write';
         // Basic CRUD
         new Get(
             uriTemplate: '/tenants/{code}',
-            provider: TenantItemProvider::class
+            provider: TenantItemProvider::class,
+        ),
+        new GetCollection(
+            filters: [TenantCodeFilter::class],
+            provider: TenantCollectionProvider::class,
         ),
         new Post(
             securityPostDenormalize: 'is_granted("tenant.create", object)',

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Containers\TenantContainer\Application\CommandHandler;
+namespace App\Containers\TenantContainer\Test\Unit\Application\CommandHandler;
 
+use App\Containers\TenantContainer\Application\CommandHandler\CreateTenantCommandHandler;
 use App\Containers\TenantContainer\Application\FindsTenantInterface;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
 use App\Containers\TenantContainer\Domain\Command\CreateTenantCommand;
@@ -22,6 +23,21 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
+/**
+ * @covers \App\Containers\TenantContainer\Application\CommandHandler\CreateTenantCommandHandler
+ *
+ * @uses \App\Containers\TenantContainer\Domain\Command\CreateTenantCommand
+ * @uses \App\Containers\TenantContainer\Domain\Exception\TenantCodeAlreadyExistException
+ * @uses \App\Containers\TenantContainer\Domain\Model\NewTenant
+ * @uses \App\Containers\TenantContainer\Domain\Model\Tenant
+ * @uses \App\Containers\TenantContainer\Domain\Model\User
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantId
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantName
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserId
+ */
 class CreateTenantCommandHandlerTest extends TestCase
 {
     use ProphecyTrait;

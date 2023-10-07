@@ -8,6 +8,9 @@ use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Enum\TenantStatus
+ */
 final class TenantStatusTest extends TestCase
 {
     /**
@@ -18,6 +21,21 @@ final class TenantStatusTest extends TestCase
         $inputStatus = TenantStatus::from($input);
 
         self::assertEquals($expectedStatus, $inputStatus);
+    }
+
+    public function testValuesMethodReturnsExpectedResult(): void
+    {
+        $result = TenantStatus::values();
+
+        self::assertEquals([
+            'waiting_provisioning',
+            'provisioning',
+            'ready_for_migration',
+            'ready',
+            'deactivated',
+        ],
+            $result,
+        );
     }
 
     public function tenantStatusToStringProvider(): \Generator

@@ -13,6 +13,14 @@
 The .env file should be a template/reference of the configurations that your system needs. You MUST create a .env.local
 to override the configurations on your local machine or .env.$APP_ENV.local for a specific environment.
 
+### Useful commands
+run php unit test coverage:
+```
+vendor/bin/phpunit --coverage-html=coverage
+```
+
+
+
 ## 1.Migrations
 After setting up the DATABASE_URL, use the doctrine generate database to create your database or create it
 directly on the engine of you choice, 

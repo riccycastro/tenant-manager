@@ -9,6 +9,11 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Ship\Core\Domain\Message\AsyncMessageInterface;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Message\CreateTenantDatabaseMessage
+ *
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ */
 final class CreateTenantDatabaseMessageTest extends TestCase
 {
     public function testItIsAsyncMessage(): void

@@ -16,6 +16,19 @@ use App\Containers\TenantContainer\Domain\ValueObject\UserEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\UserId;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Model\Tenant
+ *
+ * @uses   \App\Containers\TenantContainer\Domain\Enum\TenantStatus
+ * @uses   \App\Containers\TenantContainer\Domain\Exception\InvalidTenantStatusWorkFlowException
+ * @uses   \App\Containers\TenantContainer\Domain\Model\User
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\TenantId
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\TenantName
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\UserId
+ */
 final class TenantTest extends TestCase
 {
     public function testPropertiesAreReadOnly(): void
@@ -82,6 +95,48 @@ final class TenantTest extends TestCase
             ],
             $result
         );
+    }
+
+    public function testItExposesIsActive(): void
+    {
+        $sut = $this->generateSubjectUnderTest();
+
+        self::assertFalse($sut->isActive());
+    }
+
+    public function testItExposesStatus(): void
+    {
+        $sut = $this->generateSubjectUnderTest();
+
+        self::assertEquals(TenantStatus::WAITING_PROVISIONING, $sut->getStatus());
+    }
+
+    public function testItExposesId(): void
+    {
+        $sut = $this->generateSubjectUnderTest();
+
+        self::assertEquals('bf2ec8bf-68f3-498a-846e-0f503fe05e41', $sut->getId()->toString());
+    }
+
+    public function testItExposesDomainEmail(): void
+    {
+        $sut = $this->generateSubjectUnderTest();
+
+        self::assertEquals('@tenant.com', $sut->getDomainEmail()->toString());
+    }
+
+    public function testItExposesName(): void
+    {
+        $sut = $this->generateSubjectUnderTest();
+
+        self::assertEquals('aName', $sut->getName()->toString());
+    }
+
+    public function testItExposesCode(): void
+    {
+        $sut = $this->generateSubjectUnderTest();
+
+        self::assertEquals('aCode', $sut->getCode()->toString());
     }
 
     /**

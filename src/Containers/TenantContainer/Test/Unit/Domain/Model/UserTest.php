@@ -10,6 +10,13 @@ use App\Containers\TenantContainer\Domain\ValueObject\UserId;
 use App\Ship\Core\Domain\Model\LoggedUser;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Model\User
+ *
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserId
+ * @uses \App\Ship\Core\Domain\Model\LoggedUser
+ */
 final class UserTest extends TestCase
 {
     public function testPropertiesAreReadOnly(): void

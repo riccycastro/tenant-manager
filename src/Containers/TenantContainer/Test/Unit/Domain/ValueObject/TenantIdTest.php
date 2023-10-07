@@ -8,6 +8,11 @@ use App\Containers\TenantContainer\Domain\Exception\InvalidTenantIdValueExceptio
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\ValueObject\TenantId
+ *
+ * @uses \App\Containers\TenantContainer\Domain\Exception\InvalidTenantIdValueException
+ */
 final class TenantIdTest extends TestCase
 {
     public function testItCanBeCreatedWithoutValue(): void

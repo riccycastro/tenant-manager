@@ -7,6 +7,9 @@ namespace App\Containers\TenantContainer\Test\Unit\Domain\Exception;
 use App\Containers\TenantContainer\Domain\Exception\InvalidTenantIdValueException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Exception\InvalidTenantIdValueException
+ */
 final class InvalidTenantIdValueExceptionTest extends TestCase
 {
     public function testItIsInvalidArgumentException(): void

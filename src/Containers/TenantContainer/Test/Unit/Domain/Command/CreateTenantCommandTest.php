@@ -15,6 +15,17 @@ use App\Containers\TenantContainer\Domain\ValueObject\UserId;
 use App\Ship\Core\Domain\Command\CommandInterface;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Command\CreateTenantCommand
+ *
+ * @uses \App\Containers\TenantContainer\Domain\Model\User
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantId
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantName
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserId
+ */
 final class CreateTenantCommandTest extends TestCase
 {
     public function testItIsCommand(): void

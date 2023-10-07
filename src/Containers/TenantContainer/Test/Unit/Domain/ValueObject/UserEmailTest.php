@@ -8,6 +8,9 @@ use App\Containers\TenantContainer\Domain\ValueObject\UserEmail;
 use PHPUnit\Framework\TestCase;
 use Webmozart\Assert\InvalidArgumentException;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
+ */
 final class UserEmailTest extends TestCase
 {
     public function testItCanBeCreatedFromString(): void

@@ -9,6 +9,11 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Ship\Core\Domain\Query\QueryInterface;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Query\FindTenantsListQuery
+ *
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ */
 final class FindTenantsListQueryTest extends TestCase
 {
     public function testItIsQuery(): void

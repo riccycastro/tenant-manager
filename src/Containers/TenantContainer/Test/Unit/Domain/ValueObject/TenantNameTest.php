@@ -8,6 +8,9 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
 use PHPUnit\Framework\TestCase;
 use Webmozart\Assert\InvalidArgumentException;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\ValueObject\TenantName
+ */
 final class TenantNameTest extends TestCase
 {
     public function testItCanBeCreatedFromString(): void

@@ -17,6 +17,20 @@ use App\Containers\TenantContainer\Domain\ValueObject\UserEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\UserId;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Model\NewTenant
+ *
+ * @uses \App\Containers\TenantContainer\Domain\Enum\TenantStatus
+ * @uses \App\Containers\TenantContainer\Domain\Event\TenantCreatedEvent
+ * @uses \App\Containers\TenantContainer\Domain\Model\Tenant
+ * @uses \App\Containers\TenantContainer\Domain\Model\User
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantId
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantName
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserId
+ */
 final class NewTenantTest extends TestCase
 {
     public function testPropertiesAreReadOnly(): void

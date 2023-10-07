@@ -10,6 +10,11 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Ship\Core\Domain\Command\CommandInterface;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Command\UpdateTenantCommand
+ *
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ */
 final class UpdateTenantCommandTest extends TestCase
 {
     public function testItIsCommand(): void

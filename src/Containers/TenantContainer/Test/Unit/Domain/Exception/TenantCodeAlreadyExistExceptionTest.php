@@ -9,6 +9,11 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Exception\TenantCodeAlreadyExistException
+ *
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ */
 final class TenantCodeAlreadyExistExceptionTest extends TestCase
 {
     public function testItIsConflictHttpException(): void

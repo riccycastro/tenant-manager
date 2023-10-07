@@ -9,6 +9,9 @@ use App\Containers\TenantContainer\Domain\Exception\InvalidTenantStatusWorkFlowE
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Exception\InvalidTenantStatusWorkFlowException
+ */
 final class InvalidTenantStatusWorkFlowExceptionTest extends TestCase
 {
     public function testItIsBadRequestHttpException(): void

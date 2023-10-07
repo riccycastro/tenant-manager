@@ -7,6 +7,9 @@ namespace App\Containers\TenantContainer\Test\Unit\Domain\Exception;
 use App\Containers\TenantContainer\Domain\Exception\InvalidUserIdValueException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \App\Containers\TenantContainer\Domain\Exception\InvalidUserIdValueException
+ */
 final class InvalidUserIdValueExceptionTest extends TestCase
 {
     public function testItIsConflictHttpException(): void

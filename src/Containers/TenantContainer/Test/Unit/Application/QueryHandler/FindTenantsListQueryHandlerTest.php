@@ -14,6 +14,13 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
+/**
+ * @covers \App\Containers\TenantContainer\Application\QueryHandler\FindTenantsListQueryHandler
+ *
+ * @uses \App\Containers\TenantContainer\Domain\Query\FindTenantsListQuery
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ * @uses \App\Ship\Core\Domain\Repository\Dto\ModelList
+ */
 final class FindTenantsListQueryHandlerTest extends TestCase
 {
     use ProphecyTrait;

@@ -35,6 +35,7 @@
     },
     "require-dev": {
         "behat/behat": "^3.13",
+        "ocramius/generated-hydrator": "^4.5",
         "phpspec/prophecy-phpunit": "^2.0.1",
         "phpstan/phpstan": "^1.10",
         "phpunit/php-code-coverage": "^9.2",

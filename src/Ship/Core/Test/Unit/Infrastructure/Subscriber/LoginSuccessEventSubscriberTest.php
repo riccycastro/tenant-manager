@@ -114,7 +114,6 @@ final class LoginSuccessEventSubscriberTest extends TestCase
 
                 public function eraseCredentials()
                 {
-                    // TODO: Implement eraseCredentials() method.
                 }
 
                 public function getUserIdentifier(): string

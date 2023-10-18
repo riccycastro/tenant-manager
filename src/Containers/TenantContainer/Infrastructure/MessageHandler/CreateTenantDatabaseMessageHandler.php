@@ -10,7 +10,7 @@ use App\Containers\TenantContainer\Domain\Message\CreateTenantDatabaseMessage;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\Query\FindTenantQuery;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
-use App\Containers\TenantContainer\Infrastructure\Service\TenantDatabaseService;
+use App\Containers\TenantContainer\Infrastructure\Service\DatabaseServiceInterface;
 use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
 use App\Ship\Core\Application\QueryHandler\QueryBusInterface;
 use Ramsey\Uuid\Rfc4122\UuidV4;
@@ -22,7 +22,7 @@ final class CreateTenantDatabaseMessageHandler
     public function __construct(
         private readonly QueryBusInterface $queryBus,
         private readonly CommandBusInterface $commandBus,
-        private readonly TenantDatabaseService $tenantDatabaseService,
+        private readonly DatabaseServiceInterface $tenantDatabaseService,
     ) {
     }
 

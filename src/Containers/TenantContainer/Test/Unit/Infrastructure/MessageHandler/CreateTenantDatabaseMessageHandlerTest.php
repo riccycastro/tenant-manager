@@ -1,0 +1,245 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Containers\TenantContainer\Test\Unit\Infrastructure\MessageHandler;
+
+use App\Containers\TenantContainer\Domain\Command\UpdateTenantCommand;
+use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
+use App\Containers\TenantContainer\Domain\Message\CreateTenantDatabaseMessage;
+use App\Containers\TenantContainer\Domain\Model\Tenant;
+use App\Containers\TenantContainer\Domain\Model\User;
+use App\Containers\TenantContainer\Domain\Query\FindTenantQuery;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
+use App\Containers\TenantContainer\Domain\ValueObject\UserEmail;
+use App\Containers\TenantContainer\Domain\ValueObject\UserId;
+use App\Containers\TenantContainer\Infrastructure\MessageHandler\CreateTenantDatabaseMessageHandler;
+use App\Containers\TenantContainer\Infrastructure\Service\DatabaseServiceInterface;
+use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
+use App\Ship\Core\Application\QueryHandler\QueryBusInterface;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\Call\Call;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\ObjectProphecy;
+
+/**
+ * @covers \App\Containers\TenantContainer\Infrastructure\MessageHandler\CreateTenantDatabaseMessageHandler
+ *
+ * @uses \App\Containers\TenantContainer\Domain\Command\UpdateTenantCommand
+ * @uses \App\Containers\TenantContainer\Domain\Message\CreateTenantDatabaseMessage
+ * @uses \App\Containers\TenantContainer\Domain\Model\Tenant
+ * @uses \App\Containers\TenantContainer\Domain\Model\User
+ * @uses \App\Containers\TenantContainer\Domain\Query\FindTenantQuery
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantId
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantName
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
+ * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserId
+ */
+final class CreateTenantDatabaseMessageHandlerTest extends TestCase
+{
+    use ProphecyTrait;
+
+    private readonly CreateTenantDatabaseMessageHandler $sut;
+    private readonly ObjectProphecy|QueryBusInterface $queryBus;
+    private readonly ObjectProphecy|CommandBusInterface $commandBus;
+    private readonly ObjectProphecy|DatabaseServiceInterface $tenantDatabaseService;
+
+    public function testExecutionShouldStopIfStatusIsNotWaitingProvisioning(): void
+    {
+        $message = new CreateTenantDatabaseMessage(TenantCode::fromString('any'));
+
+        $this->queryBus
+            ->ask(Argument::type(FindTenantQuery::class))
+            ->shouldBeCalled()
+            ->willReturn($this->generateTenant())
+        ;
+
+        $this->tenantDatabaseService
+            ->databaseExists(Argument::any())
+            ->shouldNotBeCalled()
+        ;
+
+        $this->tenantDatabaseService
+            ->beginDatabaseTransaction()
+            ->shouldNotBeCalled()
+        ;
+
+        ($this->sut)($message);
+    }
+
+    private function generateTenant(TenantStatus $tenantStatus = TenantStatus::READY): Tenant
+    {
+        return new Tenant(
+            TenantId::create(),
+            TenantName::fromString('nameless'),
+            TenantCode::fromString('a_kode'),
+            TenantDomainEmail::fromString('@site.com'),
+            new User(
+                UserId::create(),
+                UserEmail::fromString('user@site.com')
+            ),
+            $tenantStatus,
+            true,
+        );
+    }
+
+    public function testIfDatabaseExistItChangeTenantStatusToReadyForMigration(): void
+    {
+        $message = new CreateTenantDatabaseMessage(TenantCode::fromString('any'));
+        $tenant = $this->generateTenant(TenantStatus::WAITING_PROVISIONING);
+
+        $this->queryBus
+            ->ask(Argument::type(FindTenantQuery::class))
+            ->shouldBeCalled()
+            ->willReturn($tenant)
+        ;
+
+        $this->tenantDatabaseService
+            ->databaseExists($tenant->getCode())
+            ->shouldBeCalledOnce()
+            ->willReturn(true)
+        ;
+
+        $this->tenantDatabaseService
+            ->beginDatabaseTransaction()
+            ->shouldNotBeCalled()
+        ;
+
+        $self = $this;
+        $tenantCode = $tenant->getCode();
+
+        $this->commandBus
+            ->dispatch(Argument::type(UpdateTenantCommand::class))
+            ->should(function (array $data) use ($self, $tenantCode) {
+                /** @var Call $call */
+                $call = $data[0];
+
+                /** @var UpdateTenantCommand $updateTenantCommand */
+                $updateTenantCommand = $call->getArguments()[0];
+
+                $self->assertEquals($tenantCode, $updateTenantCommand->code);
+                $self->assertEquals(TenantStatus::READY_FOR_MIGRATION, $updateTenantCommand->status);
+            })
+        ;
+
+        ($this->sut)($message);
+    }
+
+    public function testWaitingProvisioningStatusIsSetOnException(): void
+    {
+        $message = new CreateTenantDatabaseMessage(TenantCode::fromString('any'));
+        $tenant = $this->generateTenant(TenantStatus::WAITING_PROVISIONING);
+
+        $this->queryBus
+            ->ask(Argument::type(FindTenantQuery::class))
+            ->shouldBeCalled()
+            ->willReturn($tenant)
+        ;
+
+        $this->tenantDatabaseService
+            ->databaseExists($tenant->getCode())
+            ->shouldBeCalledOnce()
+            ->willReturn(false)
+        ;
+
+        $this->tenantDatabaseService
+            ->beginDatabaseTransaction()
+            ->shouldBeCalledOnce()
+        ;
+
+        $this->tenantDatabaseService
+            ->createDatabase($tenant->getCode())
+            ->willThrow(new \Exception())
+        ;
+
+        $this->tenantDatabaseService
+            ->rollbackDatabaseTransaction()
+            ->shouldBecalledOnce()
+        ;
+
+        $this->commandBus
+            ->dispatch(new UpdateTenantCommand($tenant->getCode(), TenantStatus::PROVISIONING))
+            ->shouldBeCalled()
+        ;
+
+        $this->commandBus
+            ->dispatch(new UpdateTenantCommand($tenant->getCode(), TenantStatus::WAITING_PROVISIONING))
+            ->shouldBeCalled()
+        ;
+
+        ($this->sut)($message);
+    }
+
+    public function testItReproducesTheExpectedResult(): void
+    {
+        $message = new CreateTenantDatabaseMessage(TenantCode::fromString('any'));
+        $tenant = $this->generateTenant(TenantStatus::WAITING_PROVISIONING);
+
+        $this->queryBus
+            ->ask(Argument::type(FindTenantQuery::class))
+            ->shouldBeCalled()
+            ->willReturn($tenant)
+        ;
+
+        $this->tenantDatabaseService
+            ->databaseExists($tenant->getCode())
+            ->shouldBeCalledOnce()
+            ->willReturn(false)
+        ;
+
+        $this->tenantDatabaseService
+            ->beginDatabaseTransaction()
+            ->shouldBeCalledOnce()
+        ;
+
+        $this->tenantDatabaseService
+            ->createDatabase($tenant->getCode())
+            ->shouldBeCalledOnce()
+        ;
+
+        $this->tenantDatabaseService
+            ->createTenantDatabaseUser($tenant->getCode(), Argument::any())
+        ;
+
+        $this->tenantDatabaseService
+            ->commitDatabaseTransaction()
+            ->shouldBeCalledOnce()
+        ;
+
+        $this->tenantDatabaseService
+            ->rollbackDatabaseTransaction()
+            ->shouldNotBeCalled()
+        ;
+
+        $this->commandBus
+            ->dispatch(new UpdateTenantCommand($tenant->getCode(), TenantStatus::PROVISIONING))
+            ->shouldBeCalled()
+        ;
+
+        $this->commandBus
+            ->dispatch(new UpdateTenantCommand($tenant->getCode(), TenantStatus::READY_FOR_MIGRATION))
+            ->shouldBeCalled()
+        ;
+
+        ($this->sut)($message);
+    }
+
+    protected function setUp(): void
+    {
+        $this->queryBus = $this->prophesize(QueryBusInterface::class);
+        $this->commandBus = $this->prophesize(CommandBusInterface::class);
+        $this->tenantDatabaseService = $this->prophesize(DatabaseServiceInterface::class);
+
+        $this->sut = new CreateTenantDatabaseMessageHandler(
+            $this->queryBus->reveal(),
+            $this->commandBus->reveal(),
+            $this->tenantDatabaseService->reveal(),
+        );
+    }
+}

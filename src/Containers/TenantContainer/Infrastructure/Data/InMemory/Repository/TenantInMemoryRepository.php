@@ -10,7 +10,6 @@ use App\Containers\TenantContainer\Application\UpdatesTenantInterface;
 use App\Containers\TenantContainer\Domain\Model\NewTenant;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
-use App\Ship\Core\Domain\Repository\Dto\ModelList;
 use App\Ship\Core\Infrastructure\Data\InMemory\InMemoryRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -30,6 +29,7 @@ final class TenantInMemoryRepository extends InMemoryRepository implements Persi
 
         $this->entities[$tenant->getId()->toString()] = $tenant;
         $this->eventDispatcher->dispatch($newTenant->toTenantCreatedEvent());
+        ++$this->count;
 
         return $tenant;
     }
@@ -49,14 +49,5 @@ final class TenantInMemoryRepository extends InMemoryRepository implements Persi
         $this->entities[$persistedTenant->getId()->toString()] = $persistedTenant;
 
         return $persistedTenant;
-    }
-
-    public function getListResult(): ModelList
-    {
-        // todo@rcastro - implement this
-        return new ModelList(
-            items: [],
-            count: 0,
-        );
     }
 }

@@ -9,7 +9,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
-final class TenantDatabaseService
+final class TenantDatabaseService implements DatabaseServiceInterface
 {
     private Connection $connectionMaster;
     private Connection $connectionDefault;
@@ -64,7 +64,6 @@ final class TenantDatabaseService
      */
     public function databaseExists(TenantCode $tenantCode): bool
     {
-        // todo@rcastro - prepare statement
         $result = $this->connectionMaster->executeQuery(
             sprintf(
                 "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '%s%s';",

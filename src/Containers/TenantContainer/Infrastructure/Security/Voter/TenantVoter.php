@@ -19,8 +19,18 @@ final class TenantVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::TENANT_CREATE, self::TENANT_UPDATE])
-            && $subject instanceof TenantResource;
+        return $this->supportsAttribute($attribute)
+            && $this->supportsType((string) get_class($subject));
+    }
+
+    public function supportsAttribute(string $attribute): bool
+    {
+        return in_array($attribute, [self::TENANT_CREATE, self::TENANT_UPDATE]);
+    }
+
+    public function supportsType(string $subjectType): bool
+    {
+        return TenantResource::class === $subjectType;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -34,9 +44,8 @@ final class TenantVoter extends Voter
         assert($subject instanceof TenantResource);
 
         switch ($attribute) {
-            case self::TENANT_CREATE:
-                return true;
             case self::TENANT_UPDATE:
+            case self::TENANT_CREATE:
                 return true;
         }
 

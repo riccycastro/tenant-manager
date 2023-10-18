@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ship\Core\Infrastructure\Data\InMemory;
 
+use App\Ship\Core\Domain\Repository\Dto\ModelList;
 use App\Ship\Core\Domain\Repository\RepositoryInterface;
 use App\Ship\Core\Infrastructure\Exception\NonUniqueResultException;
 
@@ -18,6 +19,7 @@ abstract class InMemoryRepository implements RepositoryInterface
      * @var T[]|array<string, T>
      */
     protected array $entities = [];
+    protected int $count = 0;
 
     /**
      * @return T|null
@@ -50,6 +52,17 @@ abstract class InMemoryRepository implements RepositoryInterface
     {
         // todo@rcastro - implement this
         return $this;
+    }
+
+    /**
+     * @return ModelList<T>
+     */
+    public function getListResult(): ModelList
+    {
+        return new ModelList(
+            items: $this->entities,
+            count: $this->count,
+        );
     }
 
     /**

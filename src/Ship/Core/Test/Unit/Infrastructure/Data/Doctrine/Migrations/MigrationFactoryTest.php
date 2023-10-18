@@ -63,7 +63,6 @@ final class MigrationFactoryTest extends TestCase
 
             public function up(Schema $schema): void
             {
-                // TODO: Implement up() method.
             }
         };
 
@@ -94,7 +93,6 @@ final class MigrationFactoryTest extends TestCase
 
             public function up(Schema $schema): void
             {
-                // TODO: Implement up() method.
             }
         };
 

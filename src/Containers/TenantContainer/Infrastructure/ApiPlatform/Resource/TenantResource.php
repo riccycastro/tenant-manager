@@ -19,9 +19,6 @@ use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Provider\Ten
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-const TENANT_READ = 'tenant_read';
-const TENANT_WRITE = 'tenant_write';
-
 #[ApiResource(
     shortName: 'Tenant',
     operations: [
@@ -48,39 +45,42 @@ const TENANT_WRITE = 'tenant_write';
         ),
     ],
     normalizationContext: [
-        'groups' => [TENANT_READ],
+        'groups' => [TenantResource::TENANT_READ],
     ],
     denormalizationContext: [
-        'groups' => [TENANT_WRITE],
+        'groups' => [TenantResource::TENANT_WRITE],
     ]
 )]
 final class TenantResource
 {
+    public const TENANT_READ = 'tenant_read';
+    public const TENANT_WRITE = 'tenant_write';
+
     public function __construct(
         #[Assert\NotNull(groups: ['postValidation'])]
         #[Assert\Length(min: 1, max: 255, groups: ['postValidation'])]
-        #[Groups([TENANT_READ, TENANT_WRITE])]
+        #[Groups([self::TENANT_READ, self::TENANT_WRITE])]
         public ?string $name = null,
 
         #[Assert\NotNull(groups: ['postValidation'])]
         #[Assert\NotBlank(groups: ['postValidation'])]
         #[Assert\Regex(pattern: '/^[a-zA-Z0-9_-]+$/', groups: ['postValidation'])]
-        #[Groups([TENANT_READ, TENANT_WRITE])]
+        #[Groups([self::TENANT_READ, self::TENANT_WRITE])]
         public ?string $code = null,
 
         #[Assert\NotNull(groups: [])]
         #[Assert\Choice(choices: [true, false], groups: ['postValidation'])]
-        #[Groups([TENANT_READ])]
+        #[Groups([self::TENANT_READ])]
         public ?bool $isActive = null,
 
         #[Assert\Choice(callback: [TenantStatus::class, 'values'], groups: ['patchValidation'])]
-        #[Groups([TENANT_READ, TENANT_WRITE])]
+        #[Groups([self::TENANT_READ, self::TENANT_WRITE])]
         public ?string $status = null,
 
         #[Assert\NotNull(groups: ['postValidation'])]
         #[Assert\NotBlank(groups: ['postValidation'])]
         #[Assert\Regex(pattern: '/^@\S+\.\S+$/', groups: ['postValidation'], )]
-        #[Groups([TENANT_READ, TENANT_WRITE])]
+        #[Groups([self::TENANT_READ, self::TENANT_WRITE])]
         public ?string $domainEmail = null,
     ) {
     }

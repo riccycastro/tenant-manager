@@ -12,6 +12,6 @@ final class MessengerBusMiddleware implements MiddlewareInterface
 {
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
-        return $envelope;
+        return $stack->next()->handle($envelope, $stack);
     }
 }

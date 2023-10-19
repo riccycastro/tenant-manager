@@ -30,7 +30,8 @@ abstract class DoctrineRepository implements RepositoryInterface
     ) {
         $this->queryBuilder = $this->em->createQueryBuilder()
             ->select($alias)
-            ->from($entityClass, $alias);
+            ->from($entityClass, $alias)
+        ;
     }
 
     public function withPagination(int $page, int $itemsPerPage): static
@@ -47,6 +48,17 @@ abstract class DoctrineRepository implements RepositoryInterface
     }
 
     /**
+     * @param callable(QueryBuilder): void $filter
+     */
+    protected function filter(callable $filter): static
+    {
+        $cloned = clone $this;
+        $filter($cloned->queryBuilder);
+
+        return $cloned;
+    }
+
+    /**
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -57,15 +69,8 @@ abstract class DoctrineRepository implements RepositoryInterface
             ->setFirstResult(null)
             ->setMaxResults(null)
             ->getQuery()
-            ->getSingleScalarResult();
-    }
-
-    protected function filter(callable $filter): static
-    {
-        $cloned = clone $this;
-        $filter($cloned->queryBuilder);
-
-        return $cloned;
+            ->getSingleScalarResult()
+        ;
     }
 
     /**

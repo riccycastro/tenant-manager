@@ -6,6 +6,7 @@
 parameters:
 
 imports:
+  - { resource: modules/security/services.yaml }
   - { resource: modules/tenant/services.yaml }
 
 services:

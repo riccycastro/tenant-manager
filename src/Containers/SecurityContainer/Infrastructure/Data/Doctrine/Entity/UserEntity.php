@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity;
 
+use App\Containers\SecurityContainer\Domain\Model\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -45,5 +46,14 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+
+    public function toUser(): User
+    {
+        return new User(
+            $this->id,
+            $this->email,
+            $this->password,
+        );
     }
 }

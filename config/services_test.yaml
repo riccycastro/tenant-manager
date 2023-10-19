@@ -1,0 +1,12 @@
+
+imports:
+    - { resource: modules/security/services_test.yaml }
+    - { resource: modules/tenant/services_test.yaml }
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Tests\Behat\:
+        resource: '../tests/Behat/*'

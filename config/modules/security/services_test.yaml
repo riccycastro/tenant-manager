@@ -1,0 +1,7 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  App\Containers\SecurityContainer\Application\FindsUserInterface:
+    alias: App\Containers\SecurityContainer\Infrastructure\Data\InMemory\Repository\UserInMemoryRepository

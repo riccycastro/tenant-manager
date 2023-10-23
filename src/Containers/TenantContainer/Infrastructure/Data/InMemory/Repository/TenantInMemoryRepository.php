@@ -50,4 +50,9 @@ final class TenantInMemoryRepository extends InMemoryRepository implements Persi
 
         return $persistedTenant;
     }
+
+    public function add(Tenant $tenant): void
+    {
+        $this->entities[$tenant->getId()->toString()] = $tenant;
+    }
 }

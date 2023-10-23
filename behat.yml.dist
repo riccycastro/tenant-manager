@@ -1,0 +1,18 @@
+default:
+    suites:
+        default:
+            paths:
+                - "%paths.base%/src/Containers/TenantContainer/Test/features"
+            contexts:
+                - App\Containers\SecurityContainer\Test\Acceptance\Common\CommonSecurityContext
+                - App\Containers\TenantContainer\Test\Acceptance\Common\CommonTenantContext
+                - App\Containers\TenantContainer\Test\Acceptance\Framework\CreateTenantContext
+                - App\Containers\TenantContainer\Test\Acceptance\Framework\GetTenantContext
+                - App\Containers\TenantContainer\Test\Acceptance\Framework\ListTenantContext
+
+    extensions:
+        FriendsOfBehat\SymfonyExtension:
+            kernel:
+                class: App\Ship\Core\Kernel
+                environment: test
+            bootstrap: tests/bootstrap.php

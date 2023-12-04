@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ship\Core\Infrastructure\Subscriber;
 
-use App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity\UserEntity;
+use App\Containers\SecurityContainer\Domain\Model\User;
 use App\Ship\Core\Application\Context;
 use App\Ship\Core\Domain\Model\LoggedUser;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,7 +28,7 @@ final class LoginSuccessEventSubscriber implements EventSubscriberInterface
     {
         $token = $this->tokenStorage->getToken();
 
-        if ($token && $token->getUser() instanceof UserEntity) {
+        if ($token && $token->getUser() instanceof User) {
             $userEntity = $token->getUser();
 
             $this->context->setLoggedUser(new LoggedUser(

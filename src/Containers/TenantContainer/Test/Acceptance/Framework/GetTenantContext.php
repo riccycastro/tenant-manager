@@ -9,6 +9,7 @@ use App\Ship\Core\Test\Acceptance\Component\ResponseHelper;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\Assert;
+use Symfony\Component\HttpFoundation\Response;
 
 final class GetTenantContext implements Context
 {
@@ -39,7 +40,7 @@ final class GetTenantContext implements Context
         Assert::assertTrue($this->responseHelper->hasResponse());
 
         $response = $this->responseHelper->getResponse();
-        Assert::assertEquals(200, $response->getStatusCode());
+        Assert::assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
         $tenant = json_decode($response->getContent(), true);
 

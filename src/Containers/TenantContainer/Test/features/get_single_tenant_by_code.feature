@@ -2,7 +2,7 @@ Feature: Get a single tenant by code
   As a user
   I want to be able to get a single tenant by its code
 
-  Scenario:
+  Scenario: Successfully get a single tenant
     Given I am authenticated as system user
     And I have a tenant with:
       | field        | value           |

@@ -24,7 +24,7 @@ final class RequestHelper
      *
      * @throws \Exception
      */
-    public function makePostRequest(string $urlName, array $urlParams, array $bodyParams): Response
+    public function makePostRequest(string $urlName, array $urlParams = [], array $bodyParams = []): Response
     {
         $uri = $this->urlGenerator->generate($urlName, $urlParams);
 
@@ -78,6 +78,7 @@ final class RequestHelper
         return [
             'Authorization' => 'Bearer '.$this->tokenStorage->getToken(),
             'accept' => 'application/json',
+            'content-type' => 'application/json',
         ];
     }
 }

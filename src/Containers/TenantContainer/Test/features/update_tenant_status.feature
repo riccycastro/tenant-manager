@@ -12,5 +12,6 @@ Feature: Update tenant status
       | status       | waiting_provisioning |
       | is active    | true                 |
     When I update the tenant "my-homespot" with:
-      | status       |
-      | provisioning |
+      | field        | value |
+      | status       |       |
+      | provisioning |       |

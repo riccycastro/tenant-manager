@@ -18,8 +18,10 @@ run php unit test coverage:
 ```
 vendor/bin/phpunit --coverage-html=coverage
 ```
-
-
+run behat:
+```
+vendor/bin/behat
+```
 
 ## 1.Migrations
 After setting up the DATABASE_URL, use the doctrine generate database to create your database or create it
@@ -32,6 +34,19 @@ then run the migration command.
     bin/console doctrine:database:create
     bin/console doctrine:migrations:migrate
 ```
+
+## 2. Setup static analyses
+If using container you'll need to enter it.
+cd to tools/php-cs-fixer and run
+```
+composer install
+```
+The cd to tools/git/hooks and copy the pre-commit file to the .git folder
+```
+cp pre-commit ../../../.git/hooks/
+```
+
+Edit the hook file and change the command accordingly. If using a container you need to change the name of the container
 
 ## 2.Queue
 

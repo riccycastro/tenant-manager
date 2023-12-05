@@ -1,0 +1,11 @@
+parameters:
+    level: 7
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
+    excludePaths:
+        - 'src/Containers/TenantContainer/Test/*'
+        - 'src/Ship/Core/Test/*'

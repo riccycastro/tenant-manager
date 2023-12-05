@@ -9,11 +9,12 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Containers\TenantContainer\Domain\Command\UpdateTenantCommand;
 use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\PatchTenantInputDto;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
 use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
 
 /**
- * @implements ProcessorInterface<TenantResource>
+ * @implements ProcessorInterface<PatchTenantInputDto>
  */
 final class UpdateTenantProcessor implements ProcessorInterface
 {
@@ -22,12 +23,13 @@ final class UpdateTenantProcessor implements ProcessorInterface
     ) {
     }
 
+    // @phpstan-ignore-next-line
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): TenantResource
     {
-        assert($data instanceof TenantResource);
+        assert($data instanceof PatchTenantInputDto);
 
         $command = new UpdateTenantCommand(
-            code: TenantCode::fromString($data->code),
+            code: TenantCode::fromString($uriVariables['code'] ?? null),
             status: $data->status ? TenantStatus::from($data->status) : null,
         );
 

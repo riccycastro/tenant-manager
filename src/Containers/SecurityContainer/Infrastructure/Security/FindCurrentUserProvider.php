@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
- * @implements PasswordUpgraderInterface<User>
+ * @implements UserProviderInterface<User>
  */
 final class FindCurrentUserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
@@ -31,12 +31,14 @@ final class FindCurrentUserProvider implements UserProviderInterface, PasswordUp
         // TODO: Implement upgradePassword() method.
     }
 
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
+        assert($user instanceof User);
+
         return $user;
     }
 
-    public function supportsClass(string $class)
+    public function supportsClass(string $class): bool
     {
         return User::class === $class;
     }

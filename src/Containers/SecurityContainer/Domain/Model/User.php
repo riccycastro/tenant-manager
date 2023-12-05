@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public function __construct(
-        private readonly string $id, // @phpstan-ignore-line
+        private readonly string $id,
         private readonly string $email,
         private string $password,
     ) {

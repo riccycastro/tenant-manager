@@ -1,4 +1,0 @@
-parameters:
-    excludePaths:
-        - 'src/Containers/TenantContainer/Test/*'
-        - 'src/Ship/Core/Test/*'

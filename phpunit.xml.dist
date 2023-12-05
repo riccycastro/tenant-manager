@@ -32,8 +32,11 @@
     <coverage cacheDirectory=".phpunit.cache/code-coverage"
               processUncoveredFiles="true">
         <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <exclude>
             <directory suffix=".php">src/**/Test/Unit</directory>
             <directory suffix=".php">src/**/**/Test/Unit</directory>
-        </include>
+        </exclude>
     </coverage>
 </phpunit>

@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\PatchTenantInputDto;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\OpenApi\TenantCodeFilter;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Processor\CreateTenantProcessor;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Processor\UpdateTenantProcessor;
@@ -34,12 +35,14 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(
             securityPostDenormalize: 'is_granted("tenant.create", object)',
             validationContext: ['groups' => ['postValidation']],
+            name: 'tenant_create',
             processor: CreateTenantProcessor::class,
         ),
         new Patch(
             uriTemplate: '/tenants/{code}',
             securityPostDenormalize: 'is_granted("tenant.update", object)',
             validationContext: ['groups' => ['patchValidation']],
+            input: PatchTenantInputDto::class,
             provider: TenantItemProvider::class,
             processor: UpdateTenantProcessor::class,
         ),
@@ -53,8 +56,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 final class TenantResource
 {
-    public const TENANT_READ = 'tenant_read';
-    public const TENANT_WRITE = 'tenant_write';
+    public const TENANT_READ = 'tenant.read';
+    public const TENANT_WRITE = 'tenant.write';
 
     public function __construct(
         #[Assert\NotNull(groups: ['postValidation'])]
@@ -79,7 +82,7 @@ final class TenantResource
 
         #[Assert\NotNull(groups: ['postValidation'])]
         #[Assert\NotBlank(groups: ['postValidation'])]
-        #[Assert\Regex(pattern: '/^@\S+\.\S+$/', groups: ['postValidation'], )]
+        #[Assert\Regex(pattern: '/^@\S+\.\S+$/', groups: ['postValidation'])]
         #[Groups([self::TENANT_READ, self::TENANT_WRITE])]
         public ?string $domainEmail = null,
     ) {

@@ -12,7 +12,8 @@
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 
-/.idea
+/.idea/*
+!/.idea/codeStyles
 
 .php-cs-fixer.cache
 
@@ -26,3 +27,7 @@ coverage
 ###> friends-of-behat/symfony-extension ###
 /behat.yml
 ###< friends-of-behat/symfony-extension ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

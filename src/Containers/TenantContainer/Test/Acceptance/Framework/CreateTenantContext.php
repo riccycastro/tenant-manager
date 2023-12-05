@@ -22,7 +22,7 @@ final class CreateTenantContext implements Context
     /**
      * @When /^I create a new tenant with:$/
      */
-    public function iCreateANewTenantWith(TableNode $table)
+    public function iCreateANewTenantWith(TableNode $table): void
     {
         $data = [];
 
@@ -32,7 +32,7 @@ final class CreateTenantContext implements Context
 
         $this->responseHelper->setResponse(
             $this->requestHelper->makePostRequest(
-                urlName: '_api_/tenants{._format}_post',
+                urlName: 'tenant_create',
                 bodyParams: [
                     'name' => $data['name'],
                     'code' => $data['code'],
@@ -45,7 +45,7 @@ final class CreateTenantContext implements Context
     /**
      * @Then /^I should see that it was created successfully$/
      */
-    public function iShouldSeeThatItWasCreatedSuccessfully()
+    public function iShouldSeeThatItWasCreatedSuccessfully(): void
     {
         Assert::assertTrue($this->responseHelper->hasResponse());
         Assert::assertEquals(Response::HTTP_CREATED, $this->responseHelper->getResponse()->getStatusCode());

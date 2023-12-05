@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ship\Core\Test\Unit\Infrastructure\Subscriber;
 
-use App\Containers\SecurityContainer\Infrastructure\Data\Doctrine\Entity\UserEntity;
+use App\Containers\SecurityContainer\Domain\Model\User;
 use App\Ship\Core\Application\Context;
 use App\Ship\Core\Domain\Model\LoggedUser;
 use App\Ship\Core\Infrastructure\Subscriber\LoginSuccessEventSubscriber;
@@ -20,6 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @covers \App\Ship\Core\Infrastructure\Subscriber\LoginSuccessEventSubscriber
  *
+ * @uses   \App\Containers\SecurityContainer\Domain\Model\User
  * @uses   \App\Ship\Core\Application\Context
  * @uses   \App\Ship\Core\Domain\Model\LoggedUser
  */
@@ -132,17 +133,11 @@ final class LoginSuccessEventSubscriberTest extends TestCase
 
     public function testOnLoginSuccessEventSetsUser(): void
     {
-        $userEntity = $this->prophesize(UserEntity::class);
-
-        $userEntity
-            ->getId()
-            ->willReturn(1)
-        ;
-
-        $userEntity
-            ->getUserIdentifier()
-            ->willReturn('user@site.com')
-        ;
+        $userEntity = new User(
+            '1',
+            'user@site.com',
+            'strongPassword',
+        );
 
         $this->tokenStorage
             ->getToken()

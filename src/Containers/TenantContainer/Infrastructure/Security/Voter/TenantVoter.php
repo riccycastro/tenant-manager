@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Containers\TenantContainer\Infrastructure\Security\Voter;
 
-use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\PatchTenantInputDto;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -31,7 +30,7 @@ final class TenantVoter extends Voter
 
     public function supportsType(string $subjectType): bool
     {
-        return in_array($subjectType, [TenantResource::class, PatchTenantInputDto::class]);
+        return TenantResource::class === $subjectType;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool

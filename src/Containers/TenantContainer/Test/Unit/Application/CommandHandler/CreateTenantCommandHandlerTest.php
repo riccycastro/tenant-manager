@@ -71,6 +71,7 @@ class CreateTenantCommandHandlerTest extends TestCase
             $user,
             TenantStatus::WAITING_PROVISIONING,
             false,
+            [],
         );
 
         $createTenantCommand = new CreateTenantCommand(
@@ -84,17 +85,20 @@ class CreateTenantCommandHandlerTest extends TestCase
         $this->findsTenant
             ->withCode($createTenantCommand->code)
             ->willReturn($this->findsTenant)
-            ->shouldBeCalled();
+            ->shouldBeCalled()
+        ;
 
         $this->findsTenant
             ->getResult()
             ->willReturn(null)
-            ->shouldBeCalled();
+            ->shouldBeCalled()
+        ;
 
         $this->persistsTenant
             ->saveAsNew(Argument::type(NewTenant::class))
             ->willReturn($tenant)
-            ->shouldBeCalled();
+            ->shouldBeCalled()
+        ;
 
         ($this->sut)($createTenantCommand);
     }
@@ -129,17 +133,20 @@ class CreateTenantCommandHandlerTest extends TestCase
             $user,
             TenantStatus::WAITING_PROVISIONING,
             false,
+            [],
         );
 
         $this->findsTenant
             ->withCode($createTenantCommand->code)
             ->willReturn($this->findsTenant)
-            ->shouldBeCalled();
+            ->shouldBeCalled()
+        ;
 
         $this->findsTenant
             ->getResult()
             ->willReturn($tenant)
-            ->shouldBeCalled();
+            ->shouldBeCalled()
+        ;
 
         ($this->sut)($createTenantCommand);
     }

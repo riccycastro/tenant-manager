@@ -15,9 +15,11 @@ class Kernel extends BaseKernel
     protected function build(ContainerBuilder $container): void
     {
         $container->registerForAutoconfiguration(QueryHandlerInterface::class)
-            ->addTag('messenger.message_handler', ['bus' => 'query.bus']);
+            ->addTag('messenger.message_handler', ['bus' => 'query.bus'])
+        ;
 
         $container->registerForAutoconfiguration(CommandHandlerInterface::class)
-            ->addTag('messenger.message_handler', ['bus' => 'command.bus']);
+            ->addTag('messenger.message_handler', ['bus' => 'command.bus'])
+        ;
     }
 }

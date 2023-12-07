@@ -36,7 +36,8 @@ final class NewTenant
             domainEmail: $this->domainEmail,
             createdBy: $this->createdBy,
             status: TenantStatus::WAITING_PROVISIONING,
-            isActive: true
+            isActive: true,
+            properties: [],
         );
     }
 

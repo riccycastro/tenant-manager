@@ -16,20 +16,21 @@ use App\Containers\TenantContainer\Domain\ValueObject\UserId;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\TenantEntity;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\UserEntity;
 use App\Ship\Core\Test\Unit\Infrastructure\Components\EntityInstantiator;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\TenantEntity
  *
- * @uses \App\Containers\TenantContainer\Domain\Model\Tenant
- * @uses \App\Containers\TenantContainer\Domain\Model\User
- * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
- * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail
- * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantId
- * @uses \App\Containers\TenantContainer\Domain\ValueObject\TenantName
- * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
- * @uses \App\Containers\TenantContainer\Domain\ValueObject\UserId
- * @uses \App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\UserEntity
+ * @uses   \App\Containers\TenantContainer\Domain\Model\Tenant
+ * @uses   \App\Containers\TenantContainer\Domain\Model\User
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\TenantCode
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\TenantId
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\TenantName
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\UserEmail
+ * @uses   \App\Containers\TenantContainer\Domain\ValueObject\UserId
+ * @uses   \App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\UserEntity
  */
 final class TenantEntityTest extends TestCase
 {
@@ -51,6 +52,7 @@ final class TenantEntityTest extends TestCase
                     'email' => 'user@site.com',
                 ],
             ),
+            'tenantProperties' => new ArrayCollection(),
         ]);
 
         self::assertInstanceOf(TenantEntity::class, $result);
@@ -58,7 +60,7 @@ final class TenantEntityTest extends TestCase
 
     public function testItCanBeConvertedToTenant(): void
     {
-        $tenant = $this->sut->toTenant();
+        $tenant = $this->sut->toModel();
 
         self::assertInstanceOf(Tenant::class, $tenant);
         self::assertEquals([
@@ -72,6 +74,7 @@ final class TenantEntityTest extends TestCase
             ],
             'status' => TenantStatus::WAITING_PROVISIONING->value,
             'isActive' => true,
+            'properties' => [],
         ], $tenant->toArray());
     }
 
@@ -88,9 +91,10 @@ final class TenantEntityTest extends TestCase
             ),
             TenantStatus::READY,
             false,
+            [],
         ));
 
-        $tenant = $this->sut->toTenant();
+        $tenant = $this->sut->toModel();
 
         self::assertEquals([
             'id' => '11e01269-5bc2-45cc-b11d-5930f78c3edf',
@@ -103,6 +107,7 @@ final class TenantEntityTest extends TestCase
             ],
             'status' => TenantStatus::READY->value,
             'isActive' => false,
+            'properties' => [],
         ], $tenant->toArray());
     }
 
@@ -124,6 +129,7 @@ final class TenantEntityTest extends TestCase
                 ),
                 'status' => TenantStatus::WAITING_PROVISIONING->value,
                 'isActive' => true,
+                'tenantProperties' => new ArrayCollection(),
             ],
         );
     }

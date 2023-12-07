@@ -9,6 +9,7 @@ default:
                 - App\Containers\TenantContainer\Test\Acceptance\Framework\CreateTenantContext
                 - App\Containers\TenantContainer\Test\Acceptance\Framework\GetTenantContext
                 - App\Containers\TenantContainer\Test\Acceptance\Framework\ListTenantContext
+                - App\Containers\TenantContainer\Test\Acceptance\Framework\UpdateTenantContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:

@@ -12,6 +12,8 @@ Feature: Update tenant status
       | status       | waiting_provisioning |
       | is active    | true                 |
     When I update the tenant "my-homespot" with:
-      | field        | value |
-      | status       |       |
-      | provisioning |       |
+      | field  | value        |
+      | status | provisioning |
+    Then I should see that the returned structure fields have expected values:
+      | field  | value        |
+      | status | provisioning |

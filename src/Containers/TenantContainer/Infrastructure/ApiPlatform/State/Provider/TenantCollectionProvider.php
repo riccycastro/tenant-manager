@@ -11,13 +11,13 @@ use ApiPlatform\State\ProviderInterface;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\Query\FindTenantsListQuery;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
-use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\TenantOutputDto;
 use App\Ship\Core\Application\QueryHandler\QueryBusInterface;
 use App\Ship\Core\Domain\Repository\Dto\ModelList;
 use App\Ship\Core\Infrastructure\ApiPlatform\State\Paginator;
 
 /**
- * @implements ProviderInterface<TenantResource>
+ * @implements ProviderInterface<TenantOutputDto>
  */
 final class TenantCollectionProvider implements ProviderInterface
 {
@@ -28,7 +28,7 @@ final class TenantCollectionProvider implements ProviderInterface
     }
 
     /**
-     * @return Paginator<TenantResource>
+     * @return Paginator<TenantOutputDto>
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): Paginator
     {
@@ -56,7 +56,7 @@ final class TenantCollectionProvider implements ProviderInterface
         $resources = [];
 
         foreach ($tenantModelList->items as $tenant) {
-            $resources[] = TenantResource::fromModel($tenant);
+            $resources[] = TenantOutputDto::fromModel($tenant);
         }
 
         return new Paginator(

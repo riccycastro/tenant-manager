@@ -49,6 +49,35 @@ final class RequestHelper
 
     /**
      * @param array<string, mixed> $urlParams
+     * @param array<string, mixed> $bodyParams
+     *
+     * @throws \Exception
+     */
+    public function makePatchRequest(string $urlName, array $urlParams = [], array $bodyParams = []): Response
+    {
+        $uri = $this->urlGenerator->generate($urlName, $urlParams);
+
+        $content = json_encode($bodyParams);
+
+        if (false === $content) {
+            throw new \RuntimeException('Invalid body params'.json_last_error_msg());
+        }
+
+        $request = Request::create(
+            uri: $uri,
+            method: Request::METHOD_PATCH,
+            content: $content
+        );
+
+        $request->headers->add(
+            $this->getHeaderData()
+        );
+
+        return $this->kernel->handle($request);
+    }
+
+    /**
+     * @param array<string, mixed> $urlParams
      * @param array<string, mixed> $queryParams
      *
      * @throws \Exception

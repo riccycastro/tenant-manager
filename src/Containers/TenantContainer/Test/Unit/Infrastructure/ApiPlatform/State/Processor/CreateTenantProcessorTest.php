@@ -7,6 +7,16 @@ namespace App\Containers\TenantContainer\Test\Unit\Infrastructure\ApiPlatform\St
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Containers\TenantContainer\Domain\Command\CreateTenantCommand;
+use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
+use App\Containers\TenantContainer\Domain\Model\Tenant;
+use App\Containers\TenantContainer\Domain\Model\User;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
+use App\Containers\TenantContainer\Domain\ValueObject\UserEmail;
+use App\Containers\TenantContainer\Domain\ValueObject\UserId;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\TenantOutputDto;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Processor\CreateTenantProcessor;
 use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
@@ -57,9 +67,32 @@ final class CreateTenantProcessorTest extends TestCase
             ->willReturn($loggedUser)
         ;
 
+        $id = TenantId::fromString('1008aa61-7b40-4352-8f44-9acfbc621927');
+        $code = TenantCode::fromString('aCode');
+        $name = TenantName::fromString('aName');
+        $domainEmail = TenantDomainEmail::fromString('@tenant.com');
+        $user = new User(
+            UserId::fromString('0efc7697-abae-42cb-b05c-9aec3efbbadb'),
+            UserEmail::fromString('user@tenant.com')
+        );
+
+        $tenant = new Tenant(
+            $id,
+            $name,
+            $code,
+            $domainEmail,
+            $user,
+            TenantStatus::WAITING_PROVISIONING,
+            false,
+            [],
+        );
+
         $this->commandBus
             ->dispatch(Argument::type(CreateTenantCommand::class))
             ->shouldBeCalledOnce()
+            ->willReturn(
+                $tenant,
+            )
         ;
 
         $tenantResource = new TenantResource(
@@ -70,7 +103,9 @@ final class CreateTenantProcessorTest extends TestCase
 
         $operation = $this->prophesize(Operation::class)->reveal();
 
-        $this->sut->process($tenantResource, $operation);
+        $result = $this->sut->process($tenantResource, $operation);
+
+        self::assertInstanceOf(TenantOutputDto::class, $result);
     }
 
     protected function setUp(): void

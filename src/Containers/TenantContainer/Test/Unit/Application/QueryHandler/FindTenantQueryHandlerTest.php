@@ -56,7 +56,8 @@ final class FindTenantQueryHandlerTest extends TestCase
         $this->findsTenant
             ->getResult()
             ->shouldBeCalled()
-            ->willReturn($tenant);
+            ->willReturn($tenant)
+        ;
 
         $result = ($this->sut)(new FindTenantQuery());
 
@@ -77,6 +78,7 @@ final class FindTenantQueryHandlerTest extends TestCase
             ),
             TenantStatus::WAITING_PROVISIONING,
             false,
+            [],
         );
     }
 
@@ -89,12 +91,14 @@ final class FindTenantQueryHandlerTest extends TestCase
         $this->findsTenant
             ->withCode($query->code)
             ->shouldBeCalled()
-            ->willReturn($this->findsTenant);
+            ->willReturn($this->findsTenant)
+        ;
 
         $this->findsTenant
             ->getResult()
             ->shouldBeCalled()
-            ->willReturn($tenant);
+            ->willReturn($tenant)
+        ;
 
         $result = ($this->sut)($query);
 
@@ -109,7 +113,8 @@ final class FindTenantQueryHandlerTest extends TestCase
         $this->findsTenant
             ->getResult()
             ->shouldBeCalled()
-            ->willReturn(null);
+            ->willReturn(null)
+        ;
 
         ($this->sut)(new FindTenantQuery());
     }

@@ -71,6 +71,7 @@ final class TenantTest extends TestCase
             $user,
             $status,
             false,
+            [],
         );
     }
 
@@ -92,6 +93,7 @@ final class TenantTest extends TestCase
                 ],
                 'status' => 'waiting_provisioning',
                 'isActive' => false,
+                'properties' => [],
             ],
             $result
         );

@@ -10,11 +10,16 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @implements ConvertsToModelInterface<Tenant>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'tenant')]
-class TenantEntity
+class TenantEntity implements ConvertsToModelInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string')]
@@ -39,10 +44,16 @@ class TenantEntity
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
 
+    /** @var Collection<int, TenantPropertyEntity> */
+    #[ORM\OneToMany(mappedBy: 'tenant', targetEntity: TenantPropertyEntity::class)]
+    #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id')]
+    private Collection $tenantProperties;
+
     public function __construct()
     {
         $this->isActive = false;
         $this->status = TenantStatus::WAITING_PROVISIONING->value;
+        $this->tenantProperties = new ArrayCollection();
     }
 
     /**
@@ -70,16 +81,19 @@ class TenantEntity
         $this->isActive = $tenant->isActive();
     }
 
-    public function toTenant(): Tenant
+    public function toModel(): Tenant
     {
         return new Tenant(
-            TenantId::fromString($this->id),
-            TenantName::fromString($this->name),
-            TenantCode::fromString($this->code),
-            TenantDomainEmail::fromString($this->domainEmail),
-            $this->createdBy->toUser(),
-            TenantStatus::from($this->status),
-            $this->isActive
+            id: TenantId::fromString($this->id),
+            name: TenantName::fromString($this->name),
+            code: TenantCode::fromString($this->code),
+            domainEmail: TenantDomainEmail::fromString($this->domainEmail),
+            createdBy: $this->createdBy->toUser(),
+            status: TenantStatus::from($this->status),
+            isActive: $this->isActive,
+            properties: $this->tenantProperties->map(
+                fn (TenantPropertyEntity $tenantPropertyEntity) => $tenantPropertyEntity->toModel()
+            )->toArray(),
         );
     }
 }

@@ -78,6 +78,7 @@ final class TenantInMemoryRepositoryTest extends TestCase
                 ],
                 'status' => TenantStatus::WAITING_PROVISIONING->value,
                 'isActive' => true,
+                'properties' => [],
             ],
             $result->toArray(),
         );

@@ -117,6 +117,7 @@ final class TenantCollectionProviderTest extends TestCase
             ),
             TenantStatus::READY,
             true,
+            [],
         );
     }
 

@@ -16,7 +16,7 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
 use App\Containers\TenantContainer\Domain\ValueObject\UserEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\UserId;
-use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\TenantOutputDto;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Provider\TenantItemProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -69,7 +69,7 @@ final class TenantItemProviderTest extends TestCase
 
         $tenantResource = $this->sut->provide(new Get(), $uriVariables);
 
-        self::assertInstanceOf(TenantResource::class, $tenantResource);
+        self::assertInstanceOf(TenantOutputDto::class, $tenantResource);
     }
 
     private function generateTenant(): Tenant
@@ -85,6 +85,7 @@ final class TenantItemProviderTest extends TestCase
             ),
             TenantStatus::READY,
             true,
+            [],
         );
     }
 

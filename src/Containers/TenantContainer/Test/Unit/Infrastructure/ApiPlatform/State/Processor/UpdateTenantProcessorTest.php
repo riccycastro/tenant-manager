@@ -16,6 +16,7 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
 use App\Containers\TenantContainer\Domain\ValueObject\UserEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\UserId;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\TenantOutputDto;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Processor\UpdateTenantProcessor;
 use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
@@ -63,6 +64,7 @@ final class UpdateTenantProcessorTest extends TestCase
             ),
             TenantStatus::READY,
             true,
+            [],
         );
 
         $this->commandBus
@@ -80,9 +82,9 @@ final class UpdateTenantProcessorTest extends TestCase
 
         $operation = $this->prophesize(Operation::class)->reveal();
 
-        $result = $this->sut->process($tenantResource, $operation);
+        $result = $this->sut->process($tenantResource, $operation, ['code' => 'thatCode']);
 
-        self::assertInstanceOf(TenantResource::class, $result);
+        self::assertInstanceOf(TenantOutputDto::class, $result);
     }
 
     protected function setUp(): void

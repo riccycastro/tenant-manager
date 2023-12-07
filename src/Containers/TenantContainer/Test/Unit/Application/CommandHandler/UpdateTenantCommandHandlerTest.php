@@ -65,11 +65,13 @@ final class UpdateTenantCommandHandlerTest extends TestCase
         $this->findsTenant
             ->withCode($command->code)
             ->shouldBeCalled()
-            ->willReturn($this->findsTenant);
+            ->willReturn($this->findsTenant)
+        ;
         $this->findsTenant
             ->getResult()
             ->shouldBeCalled()
-            ->willReturn(null);
+            ->willReturn(null)
+        ;
 
         ($this->sut)($command);
     }
@@ -99,16 +101,19 @@ final class UpdateTenantCommandHandlerTest extends TestCase
             $user,
             TenantStatus::WAITING_PROVISIONING,
             false,
+            [],
         );
 
         $this->findsTenant
             ->withCode($command->code)
             ->shouldBeCalled()
-            ->willReturn($this->findsTenant);
+            ->willReturn($this->findsTenant)
+        ;
         $this->findsTenant
             ->getResult()
             ->shouldBeCalled()
-            ->willReturn($tenant);
+            ->willReturn($tenant)
+        ;
 
         $self = $this;
 
@@ -122,7 +127,8 @@ final class UpdateTenantCommandHandlerTest extends TestCase
                 $tenant = $call->getArguments()[0];
                 $self->assertEquals($tenantStatus, $tenant->getStatus());
             })
-            ->willReturn($tenant);
+            ->willReturn($tenant)
+        ;
 
         ($this->sut)($command);
     }

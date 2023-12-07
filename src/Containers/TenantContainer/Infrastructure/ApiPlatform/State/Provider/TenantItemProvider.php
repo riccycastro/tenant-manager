@@ -8,10 +8,10 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Containers\TenantContainer\Application\FindsTenantInterface;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
-use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\TenantOutputDto;
 
 /**
- * @implements ProviderInterface<TenantResource>
+ * @implements ProviderInterface<TenantOutputDto>
  */
 final class TenantItemProvider implements ProviderInterface
 {
@@ -20,12 +20,15 @@ final class TenantItemProvider implements ProviderInterface
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): TenantResource
-    {
+    public function provide(
+        Operation $operation,
+        array $uriVariables = [],
+        array $context = []
+    ): TenantOutputDto {
         $tenantCode = TenantCode::fromString($uriVariables['code']);
 
         $tenant = $this->findsTenant->withCode($tenantCode)->getResult();
 
-        return TenantResource::fromModel($tenant);
+        return TenantOutputDto::fromModel($tenant);
     }
 }

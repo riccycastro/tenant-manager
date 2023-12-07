@@ -12,6 +12,7 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\TenantOutputDto;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
 use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
 use App\Ship\Core\Application\FindsLoggedUserInterface;
@@ -27,8 +28,12 @@ final class CreateTenantProcessor implements ProcessorInterface
     ) {
     }
 
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): TenantResource
-    {
+    public function process(// @phpstan-ignore-line
+        mixed $data,
+        Operation $operation,
+        array $uriVariables = [],
+        array $context = []
+    ): TenantOutputDto {
         assert($data instanceof TenantResource);
 
         $command = new CreateTenantCommand(
@@ -39,8 +44,8 @@ final class CreateTenantProcessor implements ProcessorInterface
             User::fromCoreUser($this->findsLoggedUser->getLoggedUser()),
         );
 
-        $this->commandBus->dispatch($command);
+        $tenant = $this->commandBus->dispatch($command);
 
-        return $data;
+        return TenantOutputDto::fromModel($tenant);
     }
 }

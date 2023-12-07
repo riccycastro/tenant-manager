@@ -13,6 +13,7 @@ use App\Containers\TenantContainer\Domain\Model\NewTenant;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\UserId;
+use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\ConvertsToModelInterface;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\TenantEntity;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\UserEntity;
 use App\Ship\Core\Infrastructure\Data\Doctrine\DoctrineRepository;
@@ -53,7 +54,7 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
 
         $this->eventDispatcher->dispatch($newTenant->toTenantCreatedEvent());
 
-        return $entity->toTenant();
+        return $entity->toModel();
     }
 
     /**
@@ -94,7 +95,7 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
 
         $this->em->flush();
 
-        return $tenantEntity->toTenant();
+        return $tenantEntity->toModel();
     }
 
     public function withCode(TenantCode $code): static
@@ -103,15 +104,16 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
             $qb->where(
                 sprintf('%s.code = :code', self::ALIAS)
             )
-                ->setParameter('code', $code->toString());
+                ->setParameter('code', $code->toString())
+            ;
         });
     }
 
     /**
-     * @param TenantEntity|null $entity
+     * @param ConvertsToModelInterface<Tenant>|null $entity
      */
-    protected function entityToModel($entity): ?Tenant
+    protected function entityToModel(?ConvertsToModelInterface $entity): ?Tenant
     {
-        return $entity?->toTenant();
+        return $entity?->toModel();
     }
 }

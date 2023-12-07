@@ -45,7 +45,8 @@ final class CommonTenantContext implements Context
                 email: UserEmail::fromString('user@site.com')
             ),
             status: TenantStatus::from($data['status']),
-            isActive: 'true' === $data['is active']
+            isActive: 'true' === $data['is active'],
+            properties: [],
         );
 
         $this->tenants->add($tenant);

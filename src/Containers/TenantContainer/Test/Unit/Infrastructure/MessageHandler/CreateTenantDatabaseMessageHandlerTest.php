@@ -86,6 +86,7 @@ final class CreateTenantDatabaseMessageHandlerTest extends TestCase
             ),
             $tenantStatus,
             true,
+            [],
         );
     }
 

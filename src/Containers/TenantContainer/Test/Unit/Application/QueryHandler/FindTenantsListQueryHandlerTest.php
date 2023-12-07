@@ -42,12 +42,14 @@ final class FindTenantsListQueryHandlerTest extends TestCase
         $this->findsTenant
             ->withCode($query->code)
             ->shouldBeCalled()
-            ->willReturn($this->findsTenant);
+            ->willReturn($this->findsTenant)
+        ;
 
         $this->findsTenant
             ->getListResult()
             ->shouldBeCalled()
-            ->willReturn(new ModelList([], 0));
+            ->willReturn(new ModelList([], 0))
+        ;
 
         ($this->sut)($query);
     }
@@ -62,12 +64,14 @@ final class FindTenantsListQueryHandlerTest extends TestCase
         $this->findsTenant
             ->withPagination($query->page, $query->itemsPerPage)
             ->shouldBeCalled()
-            ->willReturn($this->findsTenant);
+            ->willReturn($this->findsTenant)
+        ;
 
         $this->findsTenant
             ->getListResult()
             ->shouldBeCalled()
-            ->willReturn(new ModelList([], 0));
+            ->willReturn(new ModelList([], 0))
+        ;
 
         ($this->sut)($query);
     }
@@ -79,7 +83,8 @@ final class FindTenantsListQueryHandlerTest extends TestCase
         $this->findsTenant
             ->getListResult()
             ->shouldBeCalled()
-            ->willReturn(new ModelList([], 0));
+            ->willReturn(new ModelList([], 0))
+        ;
 
         ($this->sut)($query);
     }

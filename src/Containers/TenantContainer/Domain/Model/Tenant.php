@@ -13,6 +13,9 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
 
 final class Tenant
 {
+    /**
+     * @param TenantProperty[] $properties
+     */
     public function __construct(
         private readonly TenantId $id,
         private readonly TenantName $name,
@@ -21,6 +24,7 @@ final class Tenant
         private readonly User $createdBy,
         private readonly TenantStatus $status,
         private readonly bool $isActive,
+        private readonly array $properties,
     ) {
     }
 
@@ -60,6 +64,14 @@ final class Tenant
     }
 
     /**
+     * @return TenantProperty[] $properties
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+    /**
      * @throws InvalidTenantStatusWorkFlowException
      */
     public function update(
@@ -72,7 +84,8 @@ final class Tenant
             $this->domainEmail,
             $this->createdBy,
             null !== $status ? $this->statusWorkFlow($status) : $this->status,
-            $this->isActive
+            $this->isActive,
+            $this->properties,
         );
     }
 
@@ -109,6 +122,7 @@ final class Tenant
             'createdBy' => $this->createdBy->toArray(),
             'status' => $this->status->value,
             'isActive' => $this->isActive,
+            'properties' => array_map(fn (TenantProperty $tenantProperty) => $tenantProperty->toArray(), $this->properties),
         ];
     }
 }

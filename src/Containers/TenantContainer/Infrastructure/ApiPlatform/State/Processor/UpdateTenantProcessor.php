@@ -9,12 +9,12 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Containers\TenantContainer\Domain\Command\UpdateTenantCommand;
 use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
-use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\PatchTenantInputDto;
+use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\TenantOutputDto;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Resource\TenantResource;
 use App\Ship\Core\Application\CommandHandler\CommandBusInterface;
 
 /**
- * @implements ProcessorInterface<PatchTenantInputDto>
+ * @implements ProcessorInterface<TenantResource>
  */
 final class UpdateTenantProcessor implements ProcessorInterface
 {
@@ -23,10 +23,13 @@ final class UpdateTenantProcessor implements ProcessorInterface
     ) {
     }
 
-    // @phpstan-ignore-next-line
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): TenantResource
-    {
-        assert($data instanceof PatchTenantInputDto);
+    public function process(// @phpstan-ignore-line
+        mixed $data,
+        Operation $operation,
+        array $uriVariables = [],
+        array $context = []
+    ): TenantOutputDto {
+        assert($data instanceof TenantResource);
 
         $command = new UpdateTenantCommand(
             code: TenantCode::fromString($uriVariables['code'] ?? null),
@@ -35,6 +38,6 @@ final class UpdateTenantProcessor implements ProcessorInterface
 
         $tenant = $this->commandBus->dispatch($command);
 
-        return TenantResource::fromModel($tenant);
+        return TenantOutputDto::fromModel($tenant);
     }
 }

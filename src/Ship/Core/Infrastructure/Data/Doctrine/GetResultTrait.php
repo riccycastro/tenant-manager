@@ -2,6 +2,7 @@
 
 namespace App\Ship\Core\Infrastructure\Data\Doctrine;
 
+use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\ConvertsToModelInterface;
 use App\Ship\Core\Domain\Repository\Dto\ModelList;
 use App\Ship\Core\Infrastructure\Exception\NonUniqueResultException;
 use App\Ship\Core\Infrastructure\Exception\NoResultException;
@@ -69,7 +70,7 @@ trait GetResultTrait
      *
      * @return T|null
      */
-    abstract protected function entityToModel($entity);
+    abstract protected function entityToModel(?ConvertsToModelInterface $entity);
 
     /**
      * @return S|null

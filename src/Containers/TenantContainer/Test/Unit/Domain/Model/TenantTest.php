@@ -152,7 +152,7 @@ final class TenantTest extends TestCase
 
         $sut = $this->generateSubjectUnderTest($currentStatus);
 
-        $result = $sut->update(status: $nextStatus);
+        $result = $sut->setStatus(status: $nextStatus);
 
         if (!$shouldThrowException) {
             self::assertEquals($nextStatus, $result->getStatus());

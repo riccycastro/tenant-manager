@@ -26,25 +26,7 @@ final class RequestHelper
      */
     public function makePostRequest(string $urlName, array $urlParams = [], array $bodyParams = []): Response
     {
-        $uri = $this->urlGenerator->generate($urlName, $urlParams);
-
-        $content = json_encode($bodyParams);
-
-        if (false === $content) {
-            throw new \RuntimeException('Invalid body params'.json_last_error_msg());
-        }
-
-        $request = Request::create(
-            uri: $uri,
-            method: Request::METHOD_POST,
-            content: $content
-        );
-
-        $request->headers->add(
-            $this->getHeaderData()
-        );
-
-        return $this->kernel->handle($request);
+        return $this->makeRequest(Request::METHOD_POST, $urlName, $urlParams, $bodyParams);
     }
 
     /**
@@ -54,6 +36,28 @@ final class RequestHelper
      * @throws \Exception
      */
     public function makePatchRequest(string $urlName, array $urlParams = [], array $bodyParams = []): Response
+    {
+        return $this->makeRequest(Request::METHOD_PATCH, $urlName, $urlParams, $bodyParams);
+    }
+
+    /**
+     * @param array<string, mixed> $urlParams
+     * @param array<string, mixed> $bodyParams
+     *
+     * @throws \Exception
+     */
+    public function makePutRequest(string $urlName, array $urlParams = [], array $bodyParams = []): Response
+    {
+        return $this->makeRequest(Request::METHOD_PUT, $urlName, $urlParams, $bodyParams);
+    }
+
+    /**
+     * @param array<string, mixed> $urlParams
+     * @param array<string, mixed> $bodyParams
+     *
+     * @throws \Exception
+     */
+    public function makeRequest(string $requestType, string $urlName, array $urlParams = [], array $bodyParams = []): Response
     {
         $uri = $this->urlGenerator->generate($urlName, $urlParams);
 
@@ -65,7 +69,7 @@ final class RequestHelper
 
         $request = Request::create(
             uri: $uri,
-            method: Request::METHOD_PATCH,
+            method: $requestType,
             content: $content
         );
 

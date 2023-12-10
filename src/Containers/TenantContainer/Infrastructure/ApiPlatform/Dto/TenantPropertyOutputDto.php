@@ -14,6 +14,8 @@ final class TenantPropertyOutputDto
         public readonly string $type,
         #[Groups([TenantResource::TENANT_READ])]
         public readonly string $value,
+        #[Groups([TenantResource::TENANT_READ])]
+        public readonly string $name,
     ) {
     }
 }

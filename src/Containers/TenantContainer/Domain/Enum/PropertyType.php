@@ -11,4 +11,12 @@ enum PropertyType: string
     case INT = 'int';
     case FLOAT = 'float';
     case ARRAY = 'array';
+
+    /**
+     * @return string[]
+     */
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
 }

@@ -10,6 +10,8 @@ use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantName;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantPropertyName;
+use App\Containers\TenantContainer\Domain\ValueObject\TenantPropertyValue;
 
 final class Tenant
 {
@@ -74,7 +76,7 @@ final class Tenant
     /**
      * @throws InvalidTenantStatusWorkFlowException
      */
-    public function update(
+    public function setStatus(
         ?TenantStatus $status,
     ): self {
         return new self(
@@ -124,5 +126,58 @@ final class Tenant
             'isActive' => $this->isActive,
             'properties' => array_map(fn (TenantProperty $tenantProperty) => $tenantProperty->toArray(), $this->properties),
         ];
+    }
+
+    public function hasProperty(TenantPropertyName $name): bool
+    {
+        foreach ($this->properties as $tenantProperty) {
+            if ($tenantProperty->hasName($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function updateProperty(TenantPropertyName $name, TenantPropertyValue $value): Tenant
+    {
+        $properties = [];
+
+        foreach ($this->properties as $key => $tenantProperty) {
+            if ($tenantProperty->hasName($name)) {
+                $properties[] = $this->properties[$key]->update($value);
+            } else {
+                $properties[] = $tenantProperty;
+            }
+        }
+
+        return new self(
+            $this->id,
+            $this->name,
+            $this->code,
+            $this->domainEmail,
+            $this->createdBy,
+            $this->status,
+            $this->isActive,
+            $properties,
+        );
+    }
+
+    public function addProperty(TenantProperty $tenantProperty): Tenant
+    {
+        if ($this->hasProperty($tenantProperty->getName())) {
+            return $this;
+        }
+
+        return new self(
+            $this->id,
+            $this->name,
+            $this->code,
+            $this->domainEmail,
+            $this->createdBy,
+            $this->status,
+            $this->isActive,
+            [$tenantProperty, ...$this->properties],
+        );
     }
 }

@@ -39,9 +39,10 @@ final class TenantOutputDto
             status: $tenant->getStatus()->value,
             domainEmail: $tenant->getDomainEmail()->toString(),
             properties: array_reduce($tenant->getProperties(), function (array $carry, TenantProperty $tenantProperty) {
-                $carry[$tenantProperty->getName()->toString()] = new TenantPropertyOutputDto(
+                $carry[] = new TenantPropertyOutputDto(
                     $tenantProperty->getType(),
                     $tenantProperty->getStringValue(),
+                    $tenantProperty->getName()->toString(),
                 );
 
                 return $carry;

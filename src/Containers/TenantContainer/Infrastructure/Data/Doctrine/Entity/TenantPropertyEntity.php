@@ -20,24 +20,50 @@ class TenantPropertyEntity implements ConvertsToModelInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string')]
-    private string $id; // @phpstan-ignore-line
+    private string $id;
 
     #[ORM\Column(type: 'string')]
-    private string $name; // @phpstan-ignore-line
+    private string $name;
 
     #[ORM\Column(type: 'string')]
-    private string $value; // @phpstan-ignore-line
+    private string $value;
 
     #[ORM\Column(type: 'string')]
-    private string $type; // @phpstan-ignore-line
+    private string $type;
 
-    #[ORM\ManyToOne(targetEntity: UserEntity::class)]
+    #[ORM\ManyToOne(targetEntity: UserEntity::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id')]
-    private UserEntity $createdBy; // @phpstan-ignore-line
+    private UserEntity $createdBy;
 
     #[ORM\ManyToOne(targetEntity: TenantEntity::class, inversedBy: 'tenantProperties')]
     #[ORM\JoinColumn(name: 'tenant_id', referencedColumnName: 'id')]
     private TenantEntity $tenant; // @phpstan-ignore-line
+
+    public function __construct(
+        string $id,
+        string $name,
+        string $value,
+        string $type,
+        UserEntity $createdBy,
+        TenantEntity $tenant,
+    ) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->value = $value;
+        $this->type = $type;
+        $this->createdBy = $createdBy;
+        $this->tenant = $tenant;
+    }
+
+    public function setValue(string $value): void
+    {
+        $this->value = $value;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
     public function toModel(): TenantProperty
     {

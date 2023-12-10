@@ -15,10 +15,10 @@ class UserEntity
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string')]
-    private string $id; // @phpstan-ignore-line
+    private string $id;
 
     #[ORM\Column(type: 'string')]
-    private string $email; // @phpstan-ignore-line
+    private string $email;
 
     public function toUser(): User
     {
@@ -26,5 +26,18 @@ class UserEntity
             UserId::fromString($this->id),
             UserEmail::fromString($this->email),
         );
+    }
+
+    /**
+     * @param array<mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        $entity = new self();
+
+        $entity->id = $data['id'];
+        $entity->email = $data['email'];
+
+        return $entity;
     }
 }

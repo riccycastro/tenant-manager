@@ -41,14 +41,9 @@ final class TenantInMemoryRepository extends InMemoryRepository implements Persi
 
     public function save(Tenant $tenant): Tenant
     {
-        $persistedTenant = $this->withCode($tenant->getCode())->getResult();
-        $persistedTenant = $persistedTenant->update(
-            status: $tenant->getStatus()
-        );
+        $this->entities[$tenant->getId()->toString()] = $tenant;
 
-        $this->entities[$persistedTenant->getId()->toString()] = $persistedTenant;
-
-        return $persistedTenant;
+        return $tenant;
     }
 
     public function add(Tenant $tenant): void

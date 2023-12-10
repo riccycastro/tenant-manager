@@ -33,7 +33,7 @@ final class UpdateTenantProcessor implements ProcessorInterface
 
         $command = new UpdateTenantCommand(
             code: TenantCode::fromString($uriVariables['code'] ?? null),
-            status: $data->status ? TenantStatus::from($data->status) : null,
+            status: $data->status ? TenantStatus::from((string) $data->status) : null,
         );
 
         $tenant = $this->commandBus->dispatch($command);

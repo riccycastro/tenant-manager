@@ -29,8 +29,8 @@ class UpdateTenantContext implements Context
         }
 
         $this->responseHelper->setResponse(
-            $this->requestHelper->makePatchRequest(
-                urlName: 'tenant_update_patch',
+            $this->requestHelper->makePutRequest(
+                urlName: 'tenant_update_status_patch',
                 urlParams: [
                     'code' => $tenantCode,
                 ],

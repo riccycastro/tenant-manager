@@ -44,8 +44,8 @@ class TenantEntity implements ConvertsToModelInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
 
-    /** @var Collection<int, TenantPropertyEntity> */
-    #[ORM\OneToMany(mappedBy: 'tenant', targetEntity: TenantPropertyEntity::class)]
+    /** @var Collection<string, TenantPropertyEntity> */
+    #[ORM\OneToMany(mappedBy: 'tenant', targetEntity: TenantPropertyEntity::class, cascade: ['persist'], indexBy: 'name')]
     #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id')]
     private Collection $tenantProperties;
 
@@ -54,6 +54,14 @@ class TenantEntity implements ConvertsToModelInterface
         $this->isActive = false;
         $this->status = TenantStatus::WAITING_PROVISIONING->value;
         $this->tenantProperties = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<string, TenantPropertyEntity>
+     */
+    public function getTenantProperties(): Collection
+    {
+        return $this->tenantProperties;
     }
 
     /**
@@ -95,5 +103,15 @@ class TenantEntity implements ConvertsToModelInterface
                 fn (TenantPropertyEntity $tenantPropertyEntity) => $tenantPropertyEntity->toModel()
             )->toArray(),
         );
+    }
+
+    /**
+     * @param ArrayCollection<int, TenantPropertyEntity> $toBeSavedTenantProperties
+     */
+    public function addProperties(ArrayCollection $toBeSavedTenantProperties): void
+    {
+        foreach ($toBeSavedTenantProperties as $tenantProperty) {
+            $this->tenantProperties->set($tenantProperty->getName(), $tenantProperty);
+        }
     }
 }

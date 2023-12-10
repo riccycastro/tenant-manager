@@ -11,14 +11,17 @@ use App\Containers\TenantContainer\Domain\Exception\TenantNotFoundException;
 use App\Containers\TenantContainer\Domain\Exception\UserNotFoundException;
 use App\Containers\TenantContainer\Domain\Model\NewTenant;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
+use App\Containers\TenantContainer\Domain\Model\TenantProperty;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\UserId;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\ConvertsToModelInterface;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\TenantEntity;
+use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\TenantPropertyEntity;
 use App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Entity\UserEntity;
 use App\Ship\Core\Infrastructure\Data\Doctrine\DoctrineRepository;
 use App\Ship\Core\Infrastructure\Data\Doctrine\GetResultTrait;
 use App\Ship\Core\Infrastructure\Exception\NonUniqueResultException;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -92,6 +95,10 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
         }
 
         $tenantEntity->update($tenant);
+        $tenantEntity = $this->processTenantProperties(
+            $tenantEntity,
+            $tenant,
+        );
 
         $this->em->flush();
 
@@ -115,5 +122,32 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
     protected function entityToModel(?ConvertsToModelInterface $entity): ?Tenant
     {
         return $entity?->toModel();
+    }
+
+    private function processTenantProperties(TenantEntity $tenantEntity, Tenant $tenant): TenantEntity
+    {
+        $tenantPropertyEntityCollection = $tenantEntity->getTenantProperties();
+
+        /** @var ArrayCollection<int, TenantPropertyEntity> $toBeSavedTenantProperties */
+        $toBeSavedTenantProperties = new ArrayCollection(array_map(function (TenantProperty $tenantProperty) use ($tenantPropertyEntityCollection, $tenantEntity) {
+            if ($tenantPropertyEntity = $tenantPropertyEntityCollection->get($tenantProperty->getName()->toString())) {
+                $tenantPropertyEntity->setValue($tenantProperty->getStringValue());
+
+                return $tenantPropertyEntity;
+            }
+
+            return new TenantPropertyEntity(
+                id: $tenantProperty->getId()->toString(),
+                name: $tenantProperty->getName()->toString(),
+                value: $tenantProperty->getStringValue(),
+                type: $tenantProperty->getType(),
+                createdBy: $this->findUserEntity($tenantProperty->getCreatedBy()->getId()),
+                tenant: $tenantEntity,
+            );
+        }, $tenant->getProperties()));
+
+        $tenantEntity->addProperties($toBeSavedTenantProperties);
+
+        return $tenantEntity;
     }
 }

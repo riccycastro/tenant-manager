@@ -29,7 +29,7 @@ final class UpdateTenantCommandHandler implements CommandHandlerInterface
 
         assert($tenant instanceof Tenant);
 
-        $tenant = $tenant->update(
+        $tenant = $tenant->setStatus(
             status: $command->status
         );
 

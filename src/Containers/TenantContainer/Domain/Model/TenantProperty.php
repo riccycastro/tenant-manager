@@ -26,10 +26,15 @@ final class TenantProperty
         return [
             'id' => $this->id->toString(),
             'name' => $this->name->toString(),
-            'value' => $this->value->value(),
-            'type' => $this->value->type(),
+            'value' => $this->value->getValueString(),
+            'type' => $this->value->type()->value,
             'createdBy' => $this->createdBy->toArray(),
         ];
+    }
+
+    public function getId(): TenantPropertyId
+    {
+        return $this->id;
     }
 
     public function getName(): TenantPropertyName
@@ -45,5 +50,25 @@ final class TenantProperty
     public function getType(): string
     {
         return $this->value->type()->value;
+    }
+
+    public function getCreatedBy(): User
+    {
+        return $this->createdBy;
+    }
+
+    public function hasName(TenantPropertyName $name): bool
+    {
+        return $this->name->toString() === $name->toString();
+    }
+
+    public function update(TenantPropertyValue $value): self
+    {
+        return new self(
+            $this->id,
+            $this->name,
+            $value,
+            $this->createdBy,
+        );
     }
 }

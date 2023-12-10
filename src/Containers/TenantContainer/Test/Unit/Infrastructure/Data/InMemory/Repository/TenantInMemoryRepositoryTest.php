@@ -133,7 +133,7 @@ final class TenantInMemoryRepositoryTest extends TestCase
 
         $tenant = $newTenant->toTenant();
 
-        $tenant = $tenant->update(
+        $tenant = $tenant->setStatus(
             status: TenantStatus::PROVISIONING,
         );
 

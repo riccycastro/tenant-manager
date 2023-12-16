@@ -29,7 +29,7 @@ final class Version20230909112914 extends AbstractMigration implements HashableM
         $hashedPassword = $passwordHasher->hash($_ENV['SYSTEM_PASSWORD']);
         $this->addSql(
             sprintf(
-                "INSERT INTO `user` (`id`, `name`, `email`, `password`) VALUES('%s', 'System', '%s', '%s');",
+                "INSERT INTO `user` (`id`, `name`, `email`, `password`, `is_system`) VALUES('%s', 'System', '%s', '%s', 1);",
                 Uuid::uuid4()->toString(),
                 $_ENV['SYSTEM_EMAIL'],
                 $hashedPassword,

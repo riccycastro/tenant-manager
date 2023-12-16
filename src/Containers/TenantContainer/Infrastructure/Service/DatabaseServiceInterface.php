@@ -10,11 +10,9 @@ interface DatabaseServiceInterface
 
     public function createDatabase(TenantCode $tenantCode): void;
 
-    public function databaseExists(TenantCode $tenantCode): bool;
+    public function generateDatabaseName(TenantCode $code): string;
 
-    public function beginDatabaseTransaction(): void;
+    public function hasDatabase(TenantCode $tenantCode): bool;
 
-    public function commitDatabaseTransaction(): void;
-
-    public function rollbackDatabaseTransaction(): void;
+    public function hasUser(TenantCode $code): bool;
 }

@@ -23,6 +23,9 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private ?string $password; // @phpstan-ignore-line
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isSystem = false; // @phpstan-ignore-line
+
     public function getId(): ?string
     {
         return $this->id;

@@ -71,4 +71,12 @@ final class TenantProperty
             $this->createdBy,
         );
     }
+
+    /**
+     * @return string|int|float|bool|array|mixed[]
+     */
+    public function getValue(): array|bool|int|float|string
+    {
+        return $this->value->value();
+    }
 }

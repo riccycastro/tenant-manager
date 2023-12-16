@@ -6,6 +6,7 @@ namespace App\Containers\TenantContainer\Domain\Model;
 
 use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
 use App\Containers\TenantContainer\Domain\Exception\InvalidTenantStatusWorkFlowException;
+use App\Containers\TenantContainer\Domain\Exception\TenantPropertyNotFound;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantDomainEmail;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantId;
@@ -97,11 +98,11 @@ final class Tenant
     private function statusWorkFlow(TenantStatus $nextStatus): TenantStatus
     {
         $statusFlow = [
-            TenantStatus::WAITING_PROVISIONING->value => [TenantStatus::PROVISIONING],
-            TenantStatus::PROVISIONING->value => [TenantStatus::WAITING_PROVISIONING, TenantStatus::READY_FOR_MIGRATION],
-            TenantStatus::READY_FOR_MIGRATION->value => [TenantStatus::READY],
-            TenantStatus::READY->value => [TenantStatus::DEACTIVATED],
-            TenantStatus::DEACTIVATED->value => [TenantStatus::READY],
+            TenantStatus::WAITING_PROVISIONING->value => [TenantStatus::WAITING_PROVISIONING, TenantStatus::PROVISIONING, TenantStatus::READY_FOR_MIGRATION],
+            TenantStatus::PROVISIONING->value => [TenantStatus::PROVISIONING, TenantStatus::WAITING_PROVISIONING, TenantStatus::READY_FOR_MIGRATION],
+            TenantStatus::READY_FOR_MIGRATION->value => [TenantStatus::READY_FOR_MIGRATION, TenantStatus::READY],
+            TenantStatus::READY->value => [TenantStatus::READY, TenantStatus::DEACTIVATED],
+            TenantStatus::DEACTIVATED->value => [TenantStatus::DEACTIVATED, TenantStatus::READY],
         ];
 
         if (in_array($nextStatus, $statusFlow[$this->status->value])) {
@@ -137,6 +138,20 @@ final class Tenant
         }
 
         return false;
+    }
+
+    /**
+     * @throws TenantPropertyNotFound
+     */
+    public function getProperty(TenantPropertyName $name): ?TenantProperty
+    {
+        foreach ($this->properties as $tenantProperty) {
+            if ($tenantProperty->hasName($name)) {
+                return $tenantProperty;
+            }
+        }
+
+        throw TenantPropertyNotFound::fromTenantPropertyName($name);
     }
 
     public function updateProperty(TenantPropertyName $name, TenantPropertyValue $value): Tenant
@@ -179,5 +194,10 @@ final class Tenant
             $this->isActive,
             [$tenantProperty, ...$this->properties],
         );
+    }
+
+    public function hasStatus(TenantStatus $tenantStatus): bool
+    {
+        return $this->status === $tenantStatus;
     }
 }

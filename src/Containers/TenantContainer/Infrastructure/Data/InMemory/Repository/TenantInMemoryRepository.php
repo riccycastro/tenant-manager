@@ -7,6 +7,7 @@ namespace App\Containers\TenantContainer\Infrastructure\Data\InMemory\Repository
 use App\Containers\TenantContainer\Application\FindsTenantInterface;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
 use App\Containers\TenantContainer\Application\UpdatesTenantInterface;
+use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
 use App\Containers\TenantContainer\Domain\Model\NewTenant;
 use App\Containers\TenantContainer\Domain\Model\Tenant;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
@@ -37,6 +38,11 @@ final class TenantInMemoryRepository extends InMemoryRepository implements Persi
     public function withCode(TenantCode $code): FindsTenantInterface
     {
         return $this->filter(fn (Tenant $tenant) => $tenant->hasSameCode($code));
+    }
+
+    public function withStatus(TenantStatus $tenantStatus): FindsTenantInterface
+    {
+        return $this->filter(fn (Tenant $tenant) => $tenant->hasStatus($tenantStatus));
     }
 
     public function save(Tenant $tenant): Tenant

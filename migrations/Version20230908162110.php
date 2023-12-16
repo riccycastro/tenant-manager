@@ -27,6 +27,7 @@ final class Version20230908162110 extends AbstractMigration
             `email` varchar(255) not null unique,
             `password` varchar(255) not null,
             `is_active` tinyint(1) not null default 1,
+            `is_system` tinyint(1) not null default 0,
             `invited_by` varchar(36),
             `created_at` datetime default current_timestamp,
             `updated_at` datetime default current_timestamp on update current_timestamp,

@@ -7,6 +7,7 @@ namespace App\Containers\TenantContainer\Infrastructure\Data\Doctrine\Repository
 use App\Containers\TenantContainer\Application\FindsTenantInterface;
 use App\Containers\TenantContainer\Application\PersistsTenantInterface;
 use App\Containers\TenantContainer\Application\UpdatesTenantInterface;
+use App\Containers\TenantContainer\Domain\Enum\TenantStatus;
 use App\Containers\TenantContainer\Domain\Exception\TenantNotFoundException;
 use App\Containers\TenantContainer\Domain\Exception\UserNotFoundException;
 use App\Containers\TenantContainer\Domain\Model\NewTenant;
@@ -108,11 +109,20 @@ final class TenantRepository extends DoctrineRepository implements PersistsTenan
     public function withCode(TenantCode $code): static
     {
         return $this->filter(static function (QueryBuilder $qb) use ($code): void {
-            $qb->where(
+            $qb->andWhere(
                 sprintf('%s.code = :code', self::ALIAS)
             )
                 ->setParameter('code', $code->toString())
             ;
+        });
+    }
+
+    public function withStatus(TenantStatus $tenantStatus): static
+    {
+        return $this->filter(static function (QueryBuilder $qb) use ($tenantStatus): void {
+            $qb->andWhere(
+                sprintf('%s.status = :status', self::ALIAS)
+            )->setParameter('status', $tenantStatus->value);
         });
     }
 

@@ -30,4 +30,13 @@ final class UserInMemoryRepository extends InMemoryRepository implements FindsUs
 
         return $user;
     }
+
+    public function getSystemUser(): User
+    {
+        foreach ($this->entities as $entity) {
+            return $entity;
+        }
+
+        throw new UserNotFoundException('System user not found');
+    }
 }

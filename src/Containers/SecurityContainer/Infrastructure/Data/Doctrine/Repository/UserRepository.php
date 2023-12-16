@@ -45,6 +45,24 @@ final class UserRepository extends DoctrineRepository implements FindsUserInterf
         throw new UserNotFoundException(sprintf('User with email %s not found.', $identifier));
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getSystemUser(): User
+    {
+        $systemUser = $this->filter(static function (QueryBuilder $qb): void {
+            $qb->where(sprintf('%s.isSystem = :isSystem', self::ALIAS))
+                ->setParameter('isSystem', true)
+            ;
+        })->getResult();
+
+        if (null === $systemUser) {
+            throw new UserNotFoundException('System user not found');
+        }
+
+        return $systemUser;
+    }
+
     public function withEmail(string $email): static
     {
         return $this->filter(static function (QueryBuilder $qb) use ($email): void {

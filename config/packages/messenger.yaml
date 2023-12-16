@@ -2,10 +2,13 @@ framework:
   messenger:
     # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
     # failure_transport: failed
-    default_bus: 'command.bus'
+    default_bus: 'messenger.bus.default'
     buses:
       command.bus: []
       query.bus: []
+      messenger.bus.default:
+        middleware:
+          - 'App\Containers\SecurityContainer\Infrastructure\UI\Queue\MessageHandler\MessengerBusMiddleware'
     transports:
     # failed: 'doctrine://default?queue_name=failed'
       async:

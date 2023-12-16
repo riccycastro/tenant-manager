@@ -6,20 +6,17 @@ namespace App\Containers\TenantContainer\Infrastructure\Service;
 
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class TenantDatabaseService implements DatabaseServiceInterface
 {
     private Connection $connectionMaster;
-    private Connection $connectionDefault;
     private string $databasePrefix;
 
     public function __construct(
         ManagerRegistry $doctrine,
     ) {
         $this->connectionMaster = $doctrine->getConnection('master'); // @phpstan-ignore-line
-        $this->connectionDefault = $doctrine->getConnection('default'); // @phpstan-ignore-line
         $this->databasePrefix = $_ENV['DATABASE_PREFIX'] ?? '';
     }
 
@@ -30,7 +27,8 @@ final class TenantDatabaseService implements DatabaseServiceInterface
     {
         $this->connectionMaster->executeQuery(
             sprintf(
-                "CREATE USER `%s`@`%%` IDENTIFIED BY '%s'",
+                "DROP USER IF EXISTS %s; CREATE USER `%s`@`%%` IDENTIFIED BY '%s'",
+                $tenantCode->toString(),
                 $tenantCode->toString(),
                 $password
             )
@@ -50,19 +48,25 @@ final class TenantDatabaseService implements DatabaseServiceInterface
      */
     public function createDatabase(TenantCode $tenantCode): void
     {
+        $databaseName = $this->generateDatabaseName($tenantCode);
         $this->connectionMaster->executeQuery(
             sprintf(
-                'CREATE DATABASE IF NOT EXISTS %s%s CHARACTER SET utf8 COLLATE utf8_general_ci;',
-                $this->databasePrefix,
-                $tenantCode->toString(),
+                'DROP DATABASE IF EXISTS %s; CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8 COLLATE utf8_general_ci;',
+                $databaseName,
+                $databaseName,
             )
         );
+    }
+
+    public function generateDatabaseName(TenantCode $code): string
+    {
+        return $this->databasePrefix.$code->toString();
     }
 
     /**
      * @throws \Exception
      */
-    public function databaseExists(TenantCode $tenantCode): bool
+    public function hasDatabase(TenantCode $tenantCode): bool
     {
         $result = $this->connectionMaster->executeQuery(
             sprintf(
@@ -72,32 +76,25 @@ final class TenantDatabaseService implements DatabaseServiceInterface
             )
         );
 
-        return (bool) $result->fetchAssociative();
+        return is_array($result->fetchAssociative());
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
-    public function beginDatabaseTransaction(): void
+    public function hasUser(TenantCode $code): bool
     {
-        $this->connectionDefault->beginTransaction();
-    }
+        $result = $this->connectionMaster->executeQuery(
+            sprintf(
+                "SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = '%s')",
+                $code->toString(),
+            )
+        )->fetchNumeric();
 
-    /**
-     * @throws Exception
-     */
-    public function commitDatabaseTransaction(): void
-    {
-        if ($this->connectionDefault->isTransactionActive()) {
-            $this->connectionDefault->commit();
+        if (is_array($result)) {
+            return (bool) $result[0];
         }
-    }
 
-    /**
-     * @throws Exception
-     */
-    public function rollbackDatabaseTransaction(): void
-    {
-        $this->connectionDefault->rollback();
+        return $result;
     }
 }

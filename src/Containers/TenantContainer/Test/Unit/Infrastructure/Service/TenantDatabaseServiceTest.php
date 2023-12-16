@@ -91,7 +91,7 @@ final class TenantDatabaseServiceTest extends TestCase
             ->willReturn($queryResult->reveal())
         ;
 
-        $result = $this->sut->databaseExists(
+        $result = $this->sut->hasDatabase(
             $tenantCode,
         );
 
@@ -113,7 +113,7 @@ final class TenantDatabaseServiceTest extends TestCase
             ->willReturn($queryResult->reveal())
         ;
 
-        $result = $this->sut->databaseExists(
+        $result = $this->sut->hasDatabase(
             $tenantCode,
         );
 

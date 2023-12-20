@@ -7,6 +7,7 @@ namespace App\Containers\TenantContainer\Infrastructure\ApiPlatform\State\Provid
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Containers\TenantContainer\Application\FindsTenantInterface;
+use App\Containers\TenantContainer\Domain\Exception\TenantNotFoundException;
 use App\Containers\TenantContainer\Domain\ValueObject\TenantCode;
 use App\Containers\TenantContainer\Infrastructure\ApiPlatform\Dto\TenantOutputDto;
 
@@ -28,6 +29,10 @@ final class TenantItemProvider implements ProviderInterface
         $tenantCode = TenantCode::fromString($uriVariables['code']);
 
         $tenant = $this->findsTenant->withCode($tenantCode)->getResult();
+
+        if (null === $tenant) {
+            throw TenantNotFoundException::fromTenantCode($tenantCode);
+        }
 
         return TenantOutputDto::fromModel($tenant);
     }

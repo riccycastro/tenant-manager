@@ -22,6 +22,7 @@ services:
     exclude:
       - '../src/DependencyInjection/'
       - '../src/Containers/SecurityContainer/Infrastructure/Data/Doctrine/Entity/'
+      - '../src/Containers/TenantContainer/Infrastructure/Data/Doctrine/Entity/'
       - '../src/Ship/Core/Kernel.php'
 
   # add more service definitions when explicit configuration is needed
